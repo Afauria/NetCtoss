@@ -23,12 +23,10 @@ public class CostDao {
             return costs;
         } catch (SQLException e) {
             e.printStackTrace();
-            new RuntimeException("查询自费列表失败");
+            throw new RuntimeException("查询咨费列表失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
-        return null;
-
     }
 
     private Cost createCostEntity(ResultSet rs) throws SQLException {
@@ -63,11 +61,10 @@ public class CostDao {
             return rows;
         } catch (SQLException e) {
             e.printStackTrace();
-            new RuntimeException("保存失败");
+            throw new RuntimeException("保存失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
-        return 0;
     }
 
     //根据id查找信息
@@ -84,7 +81,7 @@ public class CostDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            new RuntimeException("根据id查找信息失败");
+            throw new RuntimeException("根据id查找信息失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
@@ -96,7 +93,7 @@ public class CostDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-            String sql = "UPDATE COST SET "
+            String sql = "UPDATE cost SET "
                     + "name=?,base_duration=?,base_cost=?,unit_cost=?,descr=?,cost_type=? WHERE cost_id=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, c.getName());
@@ -110,11 +107,10 @@ public class CostDao {
             return rows;
         } catch (SQLException e) {
             e.printStackTrace();
-            new RuntimeException("保存失败");
+            throw new RuntimeException("更新资费信息失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
-        return 0;
     }
 
     public static void main(String[] args) {

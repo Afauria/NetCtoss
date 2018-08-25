@@ -31,6 +31,15 @@
         <url-pattern>/toCostServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>user</servlet-name>
+        <servlet-class>com.zwy.work.web.AdminServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>user</servlet-name>
+        <url-pattern>/toAdminServlet</url-pattern>
+    </servlet-mapping>
     <!-- 让tomcat统一处理项目中的异常 -->
     <!-- 1.在tomcat捕获到某类型异常时,自动转发到某错误页面 -->
     <error-page>
@@ -51,20 +60,20 @@
     </session-config>
 
     <!--<filter>-->
-        <!--<filter-name>adminLogin</filter-name>-->
-        <!--<filter-class>com.zwy.work.filter.LoginFilter</filter-class>-->
-        <!--<init-param>-->
-            <!--<param-name>excludedPages</param-name>-->
-            <!--<param-value>/toLogin.do,/login.do,/createImg.do</param-value>-->
-        <!--</init-param>-->
+    <!--<filter-adminName>adminLogin</filter-adminName>-->
+    <!--<filter-class>com.zwy.work.filter.LoginFilter</filter-class>-->
+    <!--<init-param>-->
+    <!--<param-adminName>excludedPages</param-adminName>-->
+    <!--<param-value>/toLogin.do,/login.do,/createImg.do</param-value>-->
+    <!--</init-param>-->
     <!--</filter>-->
     <!--&lt;!&ndash;多个过滤条件要重复filter-mapping&ndash;&gt;-->
     <!--<filter-mapping>-->
-        <!--<filter-name>adminLogin</filter-name>-->
-        <!--<url-pattern>*.jsp</url-pattern>-->
+    <!--<filter-adminName>adminLogin</filter-adminName>-->
+    <!--<url-pattern>*.jsp</url-pattern>-->
     <!--</filter-mapping>-->
     <!--<filter-mapping>-->
-        <!--<filter-name>adminLogin</filter-name>-->
-        <!--<url-pattern>*.do</url-pattern>-->
+    <!--<filter-adminName>adminLogin</filter-adminName>-->
+    <!--<url-pattern>*.do</url-pattern>-->
     <!--</filter-mapping>-->
 </web-app>

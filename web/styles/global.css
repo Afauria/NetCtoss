@@ -169,7 +169,7 @@ textarea
 {
     min-height: 410px;
     width: 950px;
-    padding: 5px;
+    padding: 10px;
     margin-top: 5px;
     max-height: 450px;
     overflow-x: hidden;
@@ -178,7 +178,7 @@ textarea
 }
 form.main_form
 {
-    width: 800px;
+    width: 950px;
     margin: 15px auto;
 }
 
@@ -363,7 +363,7 @@ div.error_msg
 }
 div.validate_msg_long
 {
-    width: 390px;
+    width: 350px;
 }
 div.validate_msg_medium
 {

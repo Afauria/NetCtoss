@@ -8,6 +8,6 @@
     <li><a href="" class="service_off"></a></li>
     <li><a href="" class="bill_off"></a></li>
     <li><a href="" class="report_off"></a></li>
-    <li><a href="" class="information_off"></a></li>
-    <li><a href="" class="password_off"></a></li>
+    <li><a href="/netctoss/findUserInfo.do" class="information_off"></a></li>
+    <li><a href="/netctoss/toModifyPwd.do" class="password_off"></a></li>
 </ul>

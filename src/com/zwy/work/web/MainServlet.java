@@ -41,6 +41,13 @@ public class MainServlet extends HttpServlet {
                 req.setAttribute("path",path);
                 req.getRequestDispatcher("/toCostServlet").forward(req,res);
                 break;
+            case "/findUserInfo.do":
+            case "/updateUserInfo.do":
+            case "/toModifyPwd.do":
+            case "/modifyPwd.do":
+                req.setAttribute("path",path);
+                req.getRequestDispatcher("/toAdminServlet").forward(req,res);
+                break;
             default:
                 throw new RuntimeException("查无此页面");
         }
@@ -73,20 +80,21 @@ public class MainServlet extends HttpServlet {
         String imgcode = req.getParameter("imgcode");
         //根据账号查找用户
         AdminDao dao = new AdminDao();
-        Admin a = dao.findByCode(adminCode);
+        Admin user = dao.findUserByCode(adminCode);
         //获取session中的验证码
         HttpSession session = req.getSession();
         String imgcode2 = (String) session.getAttribute("imgcode");
         //判断表单提交的验证码和服务端产生的验证码是否一致
-        if (imgcode == null || imgcode.equals("") || !imgcode.equalsIgnoreCase(imgcode2)) {
-            //验证码错误,转发到登陆界面
-            req.setAttribute("error", "验证码错误");
-            req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
-        } else if (a == null) {
+//        if (imgcode == null || imgcode.equals("") || !imgcode.equalsIgnoreCase(imgcode2)) {
+//            //验证码错误,转发到登陆界面
+//            req.setAttribute("error", "验证码错误");
+//            req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
+//        } else
+            if (user == null) {
             //账号错误,转发到登陆界面
-            req.setAttribute("error", "账号错误");
+            req.setAttribute("error", "账号不存在");
             req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
-        } else if (!a.getPassword().equals(password)) {
+        } else if (!user.getPassword().equals(password)) {
             //密码错误,转发到登陆界面
             req.setAttribute("error", "密码错误");
             req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);

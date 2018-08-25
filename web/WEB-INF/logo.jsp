@@ -4,4 +4,4 @@
 <%-- <span>${cookie.adminCode.value}</span> --%>
 <span>${sessionScope.adminCode}</span>
 
-<a href="#">[退出]</a>
+<a href="/netctoss/toLogin.do">[退出]</a>

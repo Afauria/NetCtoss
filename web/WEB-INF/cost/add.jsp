@@ -73,7 +73,7 @@
     <form action="addCost.do" method="post" class="main_form">
         <div class="text_info clearfix"><span>资费名称：</span></div>
         <div class="input_info">
-            <input type="text" class="width300" name="name"/>
+            <input type="text" class="width300" name="costName"/>
             <span class="required">*</span>
             <div class="validate_msg_short">50长度的字母、数字、汉字和下划线的组合</div>
         </div>

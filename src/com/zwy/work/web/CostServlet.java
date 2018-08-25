@@ -61,15 +61,13 @@ public class CostServlet extends HttpServlet {
 
     //去添加资费的页面
     private void toAddCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        //当前:netctoss/toAddCost.do
-        //目标:netctoss/WEB-INF/cost/add.jsp
         req.getRequestDispatcher("WEB-INF/cost/add.jsp").forward(req, res);
     }
 
     //添加资费
     private void addCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //接受表单提交的数据
-        String name = req.getParameter("name");
+        String name = req.getParameter("costName");
         String costType = req.getParameter("costType");
         String baseDuration = req.getParameter("baseDuration");
         String baseCost = req.getParameter("baseCost");
@@ -110,7 +108,7 @@ public class CostServlet extends HttpServlet {
     private void updateCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("costId"));
         //接受表单提交的数据
-        String name = req.getParameter("name");
+        String name = req.getParameter("costName");
         String costType = req.getParameter("radFeeType");
         String baseDuration = req.getParameter("baseDuration");
         String baseCost = req.getParameter("baseCost");
