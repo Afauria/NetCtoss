@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class CostServlet extends HttpServlet {
+    private int singlePageLimit = 5;
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String path = req.getAttribute("path").toString();
@@ -35,6 +37,9 @@ public class CostServlet extends HttpServlet {
             case "/costDetail.do":
                 findCostById(req, res);
                 break;
+            case "/deleteCost.do":
+                deleteCost(req, res);
+                break;
             default:
                 throw new RuntimeException("查无此页面");
         }
@@ -42,13 +47,25 @@ public class CostServlet extends HttpServlet {
 
     //查询资费信息
     private void findCosts(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Integer currentPage = 1;
+        if (req.getParameter("currentPage") != null) {
+            currentPage = Integer.parseInt(req.getParameter("currentPage"));
+        }
+
         //查询所有的资费
         CostDao dao = new CostDao();
-        List<Cost> costs = dao.findCost();
+        List<Cost> costs = dao.findCosts();
+        int costsCount = costs.size();
+        int pageCount = costsCount / singlePageLimit + (costsCount % singlePageLimit > 0 ? 1 : 0);
+        int lastPageCostCount = costsCount - (pageCount - 1) * singlePageLimit;
+        if (currentPage > pageCount) {
+            currentPage = pageCount;
+        }
+        costs = costs.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
         //讲数据保存到HttpServletRequest对象上,并转发到JSP
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("pageCount", pageCount);
         req.setAttribute("costs", costs);
-        //当前:netctoss/findCosts.do
-        //目标:netctoss/WEB-INF/cost/find.jsp
         req.getRequestDispatcher("WEB-INF/cost/find.jsp").forward(req, res);
     }
 
@@ -65,7 +82,7 @@ public class CostServlet extends HttpServlet {
     }
 
     //添加资费
-    private void addCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    private void addCost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         //接受表单提交的数据
         String name = req.getParameter("costName");
         String costType = req.getParameter("costType");
@@ -89,9 +106,6 @@ public class CostServlet extends HttpServlet {
         c.setDescr(descr);
         CostDao dao = new CostDao();
         dao.save(c);
-        //重定向到资费查询页面
-        //当前:/netctoss/addCost.do
-        //目标:/netctoss/findCosts.do
         res.sendRedirect("findCosts.do");
     }
 
@@ -105,7 +119,7 @@ public class CostServlet extends HttpServlet {
         req.getRequestDispatcher("WEB-INF/cost/update.jsp").forward(req, res);
     }
 
-    private void updateCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    private void updateCost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         int id = Integer.parseInt(req.getParameter("costId"));
         //接受表单提交的数据
         String name = req.getParameter("costName");
@@ -125,5 +139,16 @@ public class CostServlet extends HttpServlet {
         CostDao dao = new CostDao();
         dao.updateCost(c);
         res.sendRedirect("findCosts.do");
+    }
+
+
+    private void deleteCost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (req.getParameter("costId") == null) {
+            throw new RuntimeException("资费id不能为空");
+        }
+        Integer costId = Integer.parseInt(req.getParameter("costId"));
+        CostDao costDao = new CostDao();
+        costDao.deleteCost(costId);
+        res.sendRedirect("findCosts.do?deleteSuccess=1");
     }
 }

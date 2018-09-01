@@ -20,7 +20,17 @@
         <servlet-name>main</servlet-name>
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
+    <!--用户管理-->
+    <servlet>
+        <servlet-name>admin</servlet-name>
+        <servlet-class>com.zwy.work.web.AdminServlet</servlet-class>
+    </servlet>
 
+    <servlet-mapping>
+        <servlet-name>admin</servlet-name>
+        <url-pattern>/toAdminServlet</url-pattern>
+    </servlet-mapping>
+    <!--资费管理-->
     <servlet>
         <servlet-name>cost</servlet-name>
         <servlet-class>com.zwy.work.web.CostServlet</servlet-class>
@@ -30,15 +40,25 @@
         <servlet-name>cost</servlet-name>
         <url-pattern>/toCostServlet</url-pattern>
     </servlet-mapping>
-
+    <!--角色管理-->
     <servlet>
-        <servlet-name>user</servlet-name>
-        <servlet-class>com.zwy.work.web.AdminServlet</servlet-class>
+        <servlet-name>role</servlet-name>
+        <servlet-class>com.zwy.work.web.RoleServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>user</servlet-name>
-        <url-pattern>/toAdminServlet</url-pattern>
+        <servlet-name>role</servlet-name>
+        <url-pattern>/toRoleServlet</url-pattern>
+    </servlet-mapping>
+    <!--账单管理-->
+    <servlet>
+        <servlet-name>bill</servlet-name>
+        <servlet-class>com.zwy.work.web.BillServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>bill</servlet-name>
+        <url-pattern>/toBillServlet</url-pattern>
     </servlet-mapping>
     <!-- 让tomcat统一处理项目中的异常 -->
     <!-- 1.在tomcat捕获到某类型异常时,自动转发到某错误页面 -->
@@ -76,4 +96,24 @@
     <!--<filter-adminName>adminLogin</filter-adminName>-->
     <!--<url-pattern>*.do</url-pattern>-->
     <!--</filter-mapping>-->
+
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
+            <taglib-location>/WEB-INF/tld/fmt.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+            <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jstl/sql</taglib-uri>
+            <taglib-location>/WEB-INF/tld/sql.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jstl/x</taglib-uri>
+            <taglib-location>/WEB-INF/tld/x.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 </web-app>

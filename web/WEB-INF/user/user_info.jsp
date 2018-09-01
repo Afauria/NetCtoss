@@ -1,5 +1,5 @@
 ﻿<%@ page import="com.zwy.work.entity.Admin" %>
-<%@ page import="java.util.List" %>
+<%@ page import="com.zwy.work.entity.Role" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -41,14 +41,20 @@
     <form action="updateUserInfo.do" method="" class="main_form">
         <%
             Admin userInfo = (Admin) request.getAttribute("userInfo");
-            String roles = (String) request.getAttribute("userRoles");
+            StringBuilder rolesStr=new StringBuilder();
+            for(int i=0;i<userInfo.getAdminRoles().size();i++){
+                if(i!=0){
+                    rolesStr.append("、");
+                }
+                rolesStr.append(userInfo.getAdminRoles().get(i).getRoleName());
+            }
         %>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
             <input type="text" readonly="readonly" class="readonly" name="adminCode" value="<%= userInfo.getAdminCode() %>"/></div>
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info">
-            <input type="text" readonly="readonly" class="readonly width400" value="<%= roles %>"/>
+            <input type="text" readonly="readonly" class="readonly width400" value="<%= rolesStr %>"/>
         </div>
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">

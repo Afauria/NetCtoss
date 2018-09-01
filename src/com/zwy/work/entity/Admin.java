@@ -1,6 +1,7 @@
 package com.zwy.work.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Admin {
     private Integer adminId;
@@ -10,13 +11,11 @@ public class Admin {
     private String telephone;
     private String email;
     private Timestamp enrolldate;
-
+    private List<Role> adminRoles;
     public Admin() {
     }
 
-    public Admin(Integer adminId, String adminCode, String password, String adminName, String telephone, String email,
-                 Timestamp enrolldate) {
-        super();
+    public Admin(Integer adminId, String adminCode, String password, String adminName, String telephone, String email, Timestamp enrolldate, List<Role> adminRoles) {
         this.adminId = adminId;
         this.adminCode = adminCode;
         this.password = password;
@@ -24,6 +23,7 @@ public class Admin {
         this.telephone = telephone;
         this.email = email;
         this.enrolldate = enrolldate;
+        this.adminRoles = adminRoles;
     }
 
     public String getTelephone() {
@@ -82,5 +82,11 @@ public class Admin {
         this.enrolldate = enrolldate;
     }
 
+    public List<Role> getAdminRoles() {
+        return adminRoles;
+    }
 
+    public void setAdminRoles(List<Role> adminRoles) {
+        this.adminRoles = adminRoles;
+    }
 }

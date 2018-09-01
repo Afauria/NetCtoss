@@ -18,6 +18,7 @@ public class MainServlet extends HttpServlet {
         String path = req.getServletPath();
         //设置编码格式
         req.setCharacterEncoding("utf-8");
+        res.setCharacterEncoding("utf-8");
         //根据规范做出判断处理
         switch (path) {
             case "/toLogin.do":
@@ -38,6 +39,7 @@ public class MainServlet extends HttpServlet {
             case "/toUpdateCost.do":
             case "/updateCost.do":
             case "/costDetail.do":
+            case "/deleteCost.do":
                 req.setAttribute("path",path);
                 req.getRequestDispatcher("/toCostServlet").forward(req,res);
                 break;
@@ -45,8 +47,27 @@ public class MainServlet extends HttpServlet {
             case "/updateUserInfo.do":
             case "/toModifyPwd.do":
             case "/modifyPwd.do":
+            case "/findAdmins.do":
+            case "/toModifyAdmin.do":
+            case "/modifyAdmin.do":
+            case "/toAddAdmin.do":
+            case "/addAdmin.do":
+            case "/deleteAdmin.do":
                 req.setAttribute("path",path);
                 req.getRequestDispatcher("/toAdminServlet").forward(req,res);
+                break;
+            case "/findBills.do":
+                req.setAttribute("path",path);
+                req.getRequestDispatcher("/toBillServlet").forward(req,res);
+                break;
+            case "/findRoles.do":
+            case "/toModifyRole.do":
+            case "/modifyRole.do":
+            case "/toAddRole.do":
+            case "/addRole.do":
+            case "/deleteRole.do":
+                req.setAttribute("path",path);
+                req.getRequestDispatcher("/toRoleServlet").forward(req,res);
                 break;
             default:
                 throw new RuntimeException("查无此页面");

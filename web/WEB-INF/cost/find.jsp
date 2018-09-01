@@ -1,7 +1,8 @@
 <%@page import="java.util.List" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<%@ page import="com.zwy.work.entity.Cost,java.util.*" %>
+<%@ page import="com.zwy.work.entity.Cost" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -25,8 +26,11 @@
         }
 
         //删除
-        function deleteFee() {
-            var r = window.confirm("确定要删除此资费吗？");
+        function deleteFee(costId) {
+            var bool = window.confirm("确定要删除此资费吗？");
+            if (bool) {
+                location.href = "deleteCost.do?costId=" + costId;
+            }
         }
     </script>
 </head>
@@ -91,12 +95,13 @@
                     </td>
                     <td><%=c.getStartime() == null ? "" : c.getStartime() %>
                     </td>
-                    <td><%= c.getStatus().equals("1")?"暂停":"开通" %></td>
+                    <td><%= c.getStatus().equals("1") ? "暂停" : "开通" %>
+                    </td>
                     <td>
                         <input type="button" value="启用" class="btn_start" onclick="startFee();"/>
                         <input type="button" value="修改" class="btn_modify"
                                onclick="location.href='toUpdateCost.do?id=<%=c.getCostId()%>';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteFee();"/>
+                        <input type="button" value="删除" class="btn_delete" onclick="deleteFee(<%=c.getCostId()%>);"/>
                     </td>
                 </tr>
                 <%
@@ -111,16 +116,36 @@
                 4、业务账号修改资费时，在下月底统一触发，修改其关联的资费ID（此触发动作由程序处理）
             </p>
         </div>
+        <%--<!--分页-->--%>
+        <%--<div id="pages">--%>
+        <%--<a href="#">上一页</a>--%>
+        <%--<a href="#" class="current_page">1</a>--%>
+        <%--<a href="#">2</a>--%>
+        <%--<a href="#">3</a>--%>
+        <%--<a href="#">4</a>--%>
+        <%--<a href="#">5</a>--%>
+        <%--<a href="#">下一页</a>--%>
+        <%--</div>--%>
         <!--分页-->
         <div id="pages">
-            <a href="#">上一页</a>
-            <a href="#" class="current_page">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">下一页</a>
+            <c:if test="${currentPage>1}">
+                <a href="findCosts.do?currentPage=${currentPage-1}">上一页</a>
+            </c:if>
+            <c:forEach begin="1" end="${pageCount}" var="p">
+                <c:choose>
+                    <c:when test="${p==currentPage}">
+                        <a href="findCosts.do?currentPage=${p}" class="current_page">${p}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="findCosts.do?currentPage=${p}">${p}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+            <c:if test="${currentPage<pageCount}">
+                <a href="findCosts.do?currentPage=${currentPage+1}">下一页</a>
+            </c:if>
         </div>
+
     </form>
 </div>
 <!--主要区域结束-->
@@ -128,6 +153,11 @@
     <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
+<script>
+    if (${param.deleteSuccess==1}) {
+        document.getElementById("operate_result_info").style.display = "block";
+    }
+</script>
 </body>
 </html>
     

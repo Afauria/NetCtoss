@@ -8,7 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CostDao {
-    public List<Cost> findCost() {
+
+    private Cost createCostEntity(ResultSet rs) throws SQLException {
+        Cost c = new Cost();
+        c.setCostId(rs.getInt("cost_id"));
+        c.setName(rs.getString("name"));
+        c.setBaseDuration(rs.getInt("base_duration"));
+        c.setBaseCost(rs.getDouble("base_cost"));
+        c.setUnitCost(rs.getDouble("unit_cost"));
+        c.setStatus(rs.getString("status"));
+        c.setDescr(rs.getString("descr"));
+        c.setCreatime(rs.getTimestamp("creatime"));
+        c.setStartime(rs.getTimestamp("startime"));
+        c.setCostType(rs.getString("cost_type"));
+        return c;
+    }
+
+    public List<Cost> findCosts() {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
@@ -27,21 +43,6 @@ public class CostDao {
         } finally {
             DBUtils.close(conn);
         }
-    }
-
-    private Cost createCostEntity(ResultSet rs) throws SQLException {
-        Cost c = new Cost();
-        c.setCostId(rs.getInt("cost_id"));
-        c.setName(rs.getString("name"));
-        c.setBaseDuration(rs.getInt("base_duration"));
-        c.setBaseCost(rs.getDouble("base_cost"));
-        c.setUnitCost(rs.getDouble("unit_cost"));
-        c.setStatus(rs.getString("status"));
-        c.setDescr(rs.getString("descr"));
-        c.setCreatime(rs.getTimestamp("creatime"));
-        c.setStartime(rs.getTimestamp("startime"));
-        c.setCostType(rs.getString("cost_type"));
-        return c;
     }
 
     public int save(Cost c) {
@@ -108,6 +109,23 @@ public class CostDao {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("更新资费信息失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public void deleteCost(Integer costId) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            //删除role_info表数据
+            String sql = "delete from cost where cost_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, costId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("删除资费失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
