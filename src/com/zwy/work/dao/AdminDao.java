@@ -124,6 +124,50 @@ public class AdminDao {
         }
     }
 
+    public List<Admin> searchAdmins(String moduleName, String roleName) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql1 = "select * from admin_info where admin_id in" +
+                    "(SELECT distinct admin_id FROM admin_role natural join role_module " +
+                    "natural join module_info natural join role_info " +
+                    "where module_name=? and role_name like ?)order by admin_id;";
+            String sql2 = "select * from admin_info where admin_id in" +
+                    "(SELECT distinct admin_id FROM admin_role natural join role_info " +
+                    "where role_name like ?)order by admin_id;";
+            String sql3 = "select * from admin_info where admin_id in" +
+                    "(SELECT distinct admin_id FROM admin_role natural join role_module " +
+                    "natural join module_info where module_name=?)order by admin_id;";
+            String sql4 = "select * from admin_info order by admin_id;";
+            PreparedStatement ps;
+            if(!roleName.equals("")&&!moduleName.equals("全部")){
+                ps = conn.prepareStatement(sql1);
+                ps.setString(1, moduleName);
+                ps.setString(2, "%" + roleName + "%");
+            } else if (moduleName.equals("全部")&&!roleName.equals("")) {
+                ps = conn.prepareStatement(sql2);
+                ps.setString(1,"%" + roleName + "%");
+            } else if(!moduleName.equals("全部")&&roleName.equals("")) {
+                ps = conn.prepareStatement(sql3);
+                ps.setString(1, moduleName);
+            }else{
+                ps = conn.prepareStatement(sql4);
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Admin> admins = new ArrayList<Admin>();
+            while (rs.next()) {
+                Admin admin = createAdmin(rs);
+                admins.add(admin);
+            }
+            return admins;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("查询管理员列表失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
     public void updateAdmin(Admin admin) {
         Connection conn = null;
         try {
@@ -220,11 +264,33 @@ public class AdminDao {
         }
     }
 
+
+    public void resetPwd(String[] selectAdminIds) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "update admin_info set password='123' where admin_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            for (String adminId : selectAdminIds) {
+                ps.setInt(1, Integer.parseInt(adminId));
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("重置管理员密码失败:" + e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            throw new RuntimeException("重置管理员密码失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
     public static void main(String[] args) {
         AdminDao dao = new AdminDao();
         Admin admin = dao.findUserByCode("caocao");
         System.out.println(admin.getAdminCode() + "," + admin.getPassword());
     }
-
 
 }

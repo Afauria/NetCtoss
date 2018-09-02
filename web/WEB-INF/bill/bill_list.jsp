@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>达内－NetCTOSS</title>
-    <link type="text/css" rel="stylesheet" media="all" href="../../styles/global.css"/>
-    <link type="text/css" rel="stylesheet" media="all" href="../../styles/global_color.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
     <script language="javascript" type="text/javascript">
         //写入下拉框中的年份和月份
         function initialYearAndMonth() {

@@ -1,8 +1,10 @@
 package com.zwy.work.web;
 
 import com.zwy.work.dao.AdminDao;
+import com.zwy.work.dao.ModuleDao;
 import com.zwy.work.dao.RoleDao;
 import com.zwy.work.entity.Admin;
+import com.zwy.work.entity.Module;
 import com.zwy.work.entity.Role;
 
 import javax.servlet.ServletException;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminServlet extends HttpServlet {
-    private int singlePageLimit=5;
+    private int singlePageLimit = 5;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -38,20 +40,26 @@ public class AdminServlet extends HttpServlet {
             case "/findAdmins.do":
                 findAdmins(req, res);
                 break;
+            case "/searchAdmins.do":
+                searchAdmins(req,res);
+                break;
             case "/toModifyAdmin.do":
-                toModifyAdmin(req,res);
+                toModifyAdmin(req, res);
                 break;
             case "/modifyAdmin.do":
-                modifyAdmin(req,res);
+                modifyAdmin(req, res);
                 break;
             case "/toAddAdmin.do":
-                toAddAdmin(req,res);
+                toAddAdmin(req, res);
                 break;
             case "/addAdmin.do":
-                addAdmin(req,res);
+                addAdmin(req, res);
                 break;
             case "/deleteAdmin.do":
-                deleteAdmin(req,res);
+                deleteAdmin(req, res);
+                break;
+            case "/resetPwd.do":
+                resetPwd(req, res);
                 break;
             default:
                 throw new RuntimeException("查无此页面");
@@ -133,59 +141,99 @@ public class AdminServlet extends HttpServlet {
         AdminDao dao = new AdminDao();
         List<Admin> admins = dao.findAdmins();
         RoleDao roleDao = new RoleDao();
-        for(int i=0;i<admins.size();i++){
+        for (int i = 0; i < admins.size(); i++) {
             List<Role> adminRoles = roleDao.findRolesByAdminId(admins.get(i).getAdminId());
             admins.get(i).setAdminRoles(adminRoles);
         }
         int adminsCount = admins.size();
         int pageCount = adminsCount / singlePageLimit + (adminsCount % singlePageLimit > 0 ? 1 : 0);
+        if (pageCount == 0) {
+            pageCount = 1;
+        }
         int lastPageCostCount = adminsCount - (pageCount - 1) * singlePageLimit;
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
         admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
+        ModuleDao moduleDao = new ModuleDao();
+        List<Module> totalModules = moduleDao.findModules();
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("pageCount", pageCount);
         req.setAttribute("admins", admins);
+        req.setAttribute("totalModules", totalModules);
         req.getRequestDispatcher("WEB-INF/admin/admin_list.jsp").forward(req, res);
     }
 
-    private void toModifyAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
-        if(req.getParameter("adminId")==null){
+    private void searchAdmins(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Integer currentPage = 1;
+        if (req.getParameter("currentPage") != null) {
+            currentPage = Integer.parseInt(req.getParameter("currentPage"));
+        }
+        String moduleName = req.getParameter("moduleName");
+        String roleName = req.getParameter("roleName");
+        req.setAttribute("moduleName", moduleName);
+        req.setAttribute("roleName",roleName);
+        AdminDao dao = new AdminDao();
+        List<Admin> admins = dao.searchAdmins(moduleName, roleName);
+        RoleDao roleDao = new RoleDao();
+        for (int i = 0; i < admins.size(); i++) {
+            List<Role> adminRoles = roleDao.findRolesByAdminId(admins.get(i).getAdminId());
+            admins.get(i).setAdminRoles(adminRoles);
+        }
+        int adminsCount = admins.size();
+        int pageCount = adminsCount / singlePageLimit + (adminsCount % singlePageLimit > 0 ? 1 : 0);
+        if (pageCount == 0) {
+            pageCount = 1;
+        }
+        int lastPageCostCount = adminsCount - (pageCount - 1) * singlePageLimit;
+        if (currentPage > pageCount) {
+            currentPage = pageCount;
+        }
+        admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
+        ModuleDao moduleDao = new ModuleDao();
+        List<Module> totalModules = moduleDao.findModules();
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("pageCount", pageCount);
+        req.setAttribute("admins", admins);
+        req.setAttribute("totalModules", totalModules);
+        req.getRequestDispatcher("WEB-INF/admin/admin_list.jsp").forward(req, res);
+    }
+    private void toModifyAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        if (req.getParameter("adminId") == null) {
             throw new RuntimeException("管理员id不能为空");
         }
-        Integer adminId=Integer.parseInt(req.getParameter("adminId"));
-        RoleDao roleDao=new RoleDao();
-        List<Role> totalRoles=roleDao.findRoles();
-        req.setAttribute("totalRoles",totalRoles);
-        AdminDao adminDao=new AdminDao();
-        Admin admin=adminDao.findAdminById(adminId);
+        Integer adminId = Integer.parseInt(req.getParameter("adminId"));
+        RoleDao roleDao = new RoleDao();
+        List<Role> totalRoles = roleDao.findRoles();
+        req.setAttribute("totalRoles", totalRoles);
+        AdminDao adminDao = new AdminDao();
+        Admin admin = adminDao.findAdminById(adminId);
         admin.setAdminRoles(roleDao.findRolesByAdminId(adminId));
-        req.setAttribute("adminInfo",admin);
+        req.setAttribute("adminInfo", admin);
         req.getRequestDispatcher("/WEB-INF/admin/admin_modi.jsp").forward(req, res);
     }
 
-    private void modifyAdmin(HttpServletRequest req, HttpServletResponse res)  throws ServletException, IOException {
-        Integer adminId=Integer.parseInt(req.getParameter("adminId"));
-        String adminName=req.getParameter("adminName");
-        String adminCode=req.getParameter("adminCode");
-        String telephone=req.getParameter("adminTelephone");
-        String email=req.getParameter("adminEmail");
+    private void modifyAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Integer adminId = Integer.parseInt(req.getParameter("adminId"));
+        String adminName = req.getParameter("adminName");
+        String adminCode = req.getParameter("adminCode");
+        String telephone = req.getParameter("adminTelephone");
+        String email = req.getParameter("adminEmail");
         String[] selectRolesId = req.getParameterValues("selectRolesId");
-        List<Role> selectRoles=new ArrayList<>();
-        RoleDao roleDao=new RoleDao();
+        List<Role> selectRoles = new ArrayList<>();
+        RoleDao roleDao = new RoleDao();
         for (String roleId : selectRolesId) {
             Role role = roleDao.findRoleById(Integer.parseInt(roleId));
             selectRoles.add(role);
         }
-        Admin admin=new Admin();
+        Admin admin = new Admin();
         admin.setAdminId(adminId);
         admin.setAdminName(adminName);
         admin.setAdminCode(adminCode);
         admin.setTelephone(telephone);
         admin.setEmail(email);
         admin.setAdminRoles(selectRoles);
-        AdminDao adminDao=new AdminDao();
+        AdminDao adminDao = new AdminDao();
         adminDao.updateAdmin(admin);
         req.getRequestDispatcher("findAdmins.do").forward(req, res);
     }
@@ -193,17 +241,17 @@ public class AdminServlet extends HttpServlet {
     private void toAddAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         AdminDao adminDao = new AdminDao();
         List<Admin> roles = adminDao.findAdmins();
-        RoleDao roleDao=new RoleDao();
-        List<Role> totalRoles=roleDao.findRoles();
-        req.setAttribute("totalRoles",totalRoles);
+        RoleDao roleDao = new RoleDao();
+        List<Role> totalRoles = roleDao.findRoles();
+        req.setAttribute("totalRoles", totalRoles);
         req.setAttribute("admins", roles);
         req.getRequestDispatcher("WEB-INF/admin/admin_add.jsp").forward(req, res);
     }
 
     private void addAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String password=req.getParameter("adminPassword");
-        String confirmPassword=req.getParameter("adminConfirmPassword");
-        if(!password.equals(confirmPassword)){
+        String password = req.getParameter("adminPassword");
+        String confirmPassword = req.getParameter("adminConfirmPassword");
+        if (!password.equals(confirmPassword)) {
             req.setAttribute("error", "两次密码输入不一致");
             req.getRequestDispatcher("toAddAdmin.do").forward(req, res);
             return;
@@ -224,9 +272,9 @@ public class AdminServlet extends HttpServlet {
             Role role = roleDao.findRoleById(Integer.parseInt(roleId));
             selectRoles.add(role);
         }
-        String adminName=req.getParameter("adminName");
-        String telephone=req.getParameter("adminTelephone");
-        String email=req.getParameter("adminEmail");
+        String adminName = req.getParameter("adminName");
+        String telephone = req.getParameter("adminTelephone");
+        String email = req.getParameter("adminEmail");
         Admin admin = new Admin();
         admin.setAdminCode(adminCode);
         admin.setAdminRoles(selectRoles);
@@ -246,5 +294,15 @@ public class AdminServlet extends HttpServlet {
         AdminDao adminDao = new AdminDao();
         adminDao.deleteAdmin(adminId);
         res.sendRedirect("findAdmins.do?deleteSuccess=1");
+    }
+
+    private void resetPwd(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (req.getParameter("selectAdminId") == null) {
+            throw new RuntimeException("管理员id不能为空");
+        }
+        String[] selectAdminIds = req.getParameterValues("selectAdminId");
+        AdminDao adminDao = new AdminDao();
+        adminDao.resetPwd(selectAdminIds);
+        res.sendRedirect("findAdmins.do?resetPwdSuccess=1");
     }
 }

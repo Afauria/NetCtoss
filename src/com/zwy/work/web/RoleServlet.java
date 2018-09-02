@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoleServlet extends HttpServlet {
-    private int singlePageLimit = 2;
+    private int singlePageLimit = 5;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -59,6 +59,9 @@ public class RoleServlet extends HttpServlet {
         }
         int rolesCount = roles.size();
         int pageCount = rolesCount / singlePageLimit + (rolesCount % singlePageLimit > 0 ? 1 : 0);
+        if (pageCount == 0) {
+            pageCount = 1;
+        }
         int lastPageCostCount = rolesCount - (pageCount - 1) * singlePageLimit;
         if (currentPage > pageCount) {
             currentPage = pageCount;

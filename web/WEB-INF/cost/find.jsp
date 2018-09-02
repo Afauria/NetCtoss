@@ -60,7 +60,7 @@
         <!--启用操作的操作提示-->
         <div id="operate_result_info" class="operate_success">
             <img src="images/close.png" onclick="this.parentNode.style.display='none';"/>
-            删除成功！
+            <span>删除成功！</span>
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
@@ -78,30 +78,30 @@
                 </tr>
                 <%
                     List<Cost> costs = (List<Cost>) request.getAttribute("costs");
-                    for (Cost c : costs) {
+                    for (Cost costItem : costs) {
                 %>
                 <tr>
-                    <td><%=c.getCostId()%>
+                    <td><%=costItem.getCostId()%>
                     </td>
-                    <td><a href="costDetail.do?id=<%= c.getCostId()%>"><%=c.getName()%>
+                    <td><a href="costDetail.do?id=<%= costItem.getCostId()%>"><%=costItem.getName()%>
                     </a></td>
-                    <td><%=c.getBaseDuration()%>
+                    <td><%=costItem.getBaseDuration()%>
                     </td>
-                    <td><%=c.getBaseCost()%>
+                    <td><%=costItem.getBaseCost()%>
                     </td>
-                    <td><%=c.getUnitCost() %>
+                    <td><%=costItem.getUnitCost() %>
                     </td>
-                    <td><%=c.getCreatime() %>
+                    <td><%=costItem.getCreatime() %>
                     </td>
-                    <td><%=c.getStartime() == null ? "" : c.getStartime() %>
+                    <td><%=costItem.getStartime() == null ? "" : costItem.getStartime() %>
                     </td>
-                    <td><%= c.getStatus().equals("1") ? "暂停" : "开通" %>
+                    <td><%= costItem.getStatus().equals("1") ? "暂停" : "开通" %>
                     </td>
                     <td>
                         <input type="button" value="启用" class="btn_start" onclick="startFee();"/>
                         <input type="button" value="修改" class="btn_modify"
-                               onclick="location.href='toUpdateCost.do?id=<%=c.getCostId()%>';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteFee(<%=c.getCostId()%>);"/>
+                               onclick="location.href='toUpdateCost.do?id=<%=costItem.getCostId()%>';"/>
+                        <input type="button" value="删除" class="btn_delete" onclick="deleteFee(<%=costItem.getCostId()%>);"/>
                     </td>
                 </tr>
                 <%

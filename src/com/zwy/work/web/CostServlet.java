@@ -57,6 +57,9 @@ public class CostServlet extends HttpServlet {
         List<Cost> costs = dao.findCosts();
         int costsCount = costs.size();
         int pageCount = costsCount / singlePageLimit + (costsCount % singlePageLimit > 0 ? 1 : 0);
+        if(pageCount==0){
+            pageCount=1;
+        }
         int lastPageCostCount = costsCount - (pageCount - 1) * singlePageLimit;
         if (currentPage > pageCount) {
             currentPage = pageCount;
@@ -71,7 +74,7 @@ public class CostServlet extends HttpServlet {
 
     private void findCostById(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         CostDao dao = new CostDao();
-        Cost cost = dao.findById(Integer.parseInt(req.getParameter("id")));
+        Cost cost = dao.findCostById(Integer.parseInt(req.getParameter("id")));
         req.setAttribute("cost", cost);
         req.getRequestDispatcher("WEB-INF/cost/fee_detail.jsp").forward(req, res);
     }
@@ -114,7 +117,7 @@ public class CostServlet extends HttpServlet {
     private void toUpdateCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         CostDao dao = new CostDao();
-        Cost cost = dao.findById(id);
+        Cost cost = dao.findCostById(id);
         req.setAttribute("cost", cost);
         req.getRequestDispatcher("WEB-INF/cost/update.jsp").forward(req, res);
     }

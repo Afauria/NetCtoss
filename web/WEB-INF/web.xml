@@ -50,6 +50,36 @@
         <servlet-name>role</servlet-name>
         <url-pattern>/toRoleServlet</url-pattern>
     </servlet-mapping>
+    <!--业务账号-->
+    <servlet>
+        <servlet-name>service</servlet-name>
+        <servlet-class>com.zwy.work.web.ServicesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>service</servlet-name>
+        <url-pattern>/toServiceServlet</url-pattern>
+    </servlet-mapping>
+    <!--账务账号-->
+    <servlet>
+        <servlet-name>account</servlet-name>
+        <servlet-class>com.zwy.work.web.AccountServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>account</servlet-name>
+        <url-pattern>/toAccountServlet</url-pattern>
+    </servlet-mapping>
+    <!--报表-->
+    <servlet>
+        <servlet-name>report</servlet-name>
+        <servlet-class>com.zwy.work.web.ReportServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>report</servlet-name>
+        <url-pattern>/toReportServlet</url-pattern>
+    </servlet-mapping>
     <!--账单管理-->
     <servlet>
         <servlet-name>bill</servlet-name>

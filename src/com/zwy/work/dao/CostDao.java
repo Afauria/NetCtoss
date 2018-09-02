@@ -69,7 +69,7 @@ public class CostDao {
     }
 
     //根据id查找信息
-    public Cost findById(int id) {
+    public Cost findCostById(int id) {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
@@ -133,7 +133,7 @@ public class CostDao {
 
     public static void main(String[] args) {
         CostDao dao = new CostDao();
-        Cost c = dao.findById(6);
+        Cost c = dao.findCostById(6);
         System.out.println(c);
     }
 }

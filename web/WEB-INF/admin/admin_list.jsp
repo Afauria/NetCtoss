@@ -8,6 +8,7 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //显示角色详细信息
         function showDetail(flag, a) {
@@ -21,8 +22,19 @@
 
         //重置密码
         function resetPwd() {
-            alert("请至少选择一条数据！");
+            var hasSelectAdmin=false;
+            $("input[name='selectAdminId']").each(function(){
+                if($(this).is(":checked")){
+                    hasSelectAdmin=true;
+                    return false;
+                }
+            });
+            if(!hasSelectAdmin){
+                alert("请至少选择一条数据！");
+                return false;
+            }
             //document.getElementById("operate_result_info").style.display = "block";
+            return true;
         }
 
         //删除
@@ -43,6 +55,9 @@
                 }
             }
         }
+        function searchAdmins() {
+            location.href='searchAdmins.do?moduleName='+$("#selModules").val()+"&roleName="+$(".text_search").val();
+        }
     </script>
 </head>
 <body>
@@ -53,30 +68,26 @@
 <!--Logo区域结束-->
 <!--导航区域开始-->
 <div id="navi">
-    <%@include file="../menu.jsp" %>
+    <%@ include file="../menu.jsp" %>
 </div>
 <!--导航区域结束-->
 <!--主要区域开始-->
 <div id="main">
-    <form action="" method="">
+    <form action="resetPwd.do" method="post" onsubmit="return resetPwd()">
         <!--查询-->
         <div class="search_add">
             <div>
                 模块：
                 <select id="selModules" class="select_search">
                     <option>全部</option>
-                    <option>角色管理</option>
-                    <option>管理员管理</option>
-                    <option>资费管理</option>
-                    <option>账务账号</option>
-                    <option>业务账号</option>
-                    <option>账单管理</option>
-                    <option>报表</option>
+                    <c:forEach items="${totalModules}" var="moduleItem">
+                        <option ${moduleName==moduleItem.moduleName?'selected':''}>${moduleItem.moduleName}</option>
+                    </c:forEach>
                 </select>
             </div>
-            <div>角色：<input type="text" value="" class="text_search width200"/></div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
-            <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();"/>
+            <div>角色：<input type="text" value="${roleName}" class="text_search width200"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="searchAdmins()"/></div>
+            <input type="submit" value="密码重置" class="btn_add" />
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddAdmin.do';"/>
         </div>
         <!--删除和密码重置的操作提示-->
@@ -113,19 +124,13 @@
                         }
                 %>
                 <tr>
-                    <td><input type="checkbox"/></td>
-                    <td><%=admin.getAdminId()%>
-                    </td>
-                    <td><%=admin.getAdminName()%>
-                    </td>
-                    <td><%=admin.getAdminCode()%>
-                    </td>
-                    <td><%=admin.getTelephone()%>
-                    </td>
-                    <td><%=admin.getEmail()%>
-                    </td>
-                    <td><%=admin.getEnrolldate()%>
-                    </td>
+                    <td><input type="checkbox" name="selectAdminId" value="<%=admin.getAdminId()%>"/></td>
+                    <td><%=admin.getAdminId()%></td>
+                    <td><%=admin.getAdminName()%></td>
+                    <td><%=admin.getAdminCode()%></td>
+                    <td><%=admin.getTelephone()%></td>
+                    <td><%=admin.getEmail()%></td>
+                    <td><%=admin.getEnrolldate()%></td>
                     <td>
                         <a class="summary" onmouseover="showDetail(<%=admin.getAdminRoles().size() > 1%>,this);" onmouseout="showDetail(false,this);">
                             <%=admin.getAdminRoles().size() > 0 ? admin.getAdminRoles().get(0).getRoleName() : ""%>
@@ -174,7 +179,16 @@
 </div>
 <script>
     if (${param.deleteSuccess==1}) {
-        document.getElementById("operate_result_info").style.display = "block";
+        $("#operate_result_info").css("display","block");
+        $("#operate_result_info").removeClass("operate_fail");
+        $("#operate_result_info").addClass("operate_success");
+        $("#operate_result_info").children("span").html("删除管理员成功");
+    }
+    if(${param.resetPwdSuccess==1}){
+        $("#operate_result_info").css("display","block");
+        $("#operate_result_info").removeClass("operate_fail");
+        $("#operate_result_info").addClass("operate_success");
+        $("#operate_result_info").children("span").html("重置密码成功，初始密码为123");
     }
 </script>
 </body>

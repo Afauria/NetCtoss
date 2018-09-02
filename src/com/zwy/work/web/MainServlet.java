@@ -40,25 +40,23 @@ public class MainServlet extends HttpServlet {
             case "/updateCost.do":
             case "/costDetail.do":
             case "/deleteCost.do":
-                req.setAttribute("path",path);
-                req.getRequestDispatcher("/toCostServlet").forward(req,res);
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toCostServlet").forward(req, res);
                 break;
             case "/findUserInfo.do":
             case "/updateUserInfo.do":
             case "/toModifyPwd.do":
             case "/modifyPwd.do":
             case "/findAdmins.do":
+            case "/searchAdmins.do":
             case "/toModifyAdmin.do":
             case "/modifyAdmin.do":
             case "/toAddAdmin.do":
             case "/addAdmin.do":
             case "/deleteAdmin.do":
-                req.setAttribute("path",path);
-                req.getRequestDispatcher("/toAdminServlet").forward(req,res);
-                break;
-            case "/findBills.do":
-                req.setAttribute("path",path);
-                req.getRequestDispatcher("/toBillServlet").forward(req,res);
+            case "/resetPwd.do":
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toAdminServlet").forward(req, res);
                 break;
             case "/findRoles.do":
             case "/toModifyRole.do":
@@ -66,8 +64,27 @@ public class MainServlet extends HttpServlet {
             case "/toAddRole.do":
             case "/addRole.do":
             case "/deleteRole.do":
-                req.setAttribute("path",path);
-                req.getRequestDispatcher("/toRoleServlet").forward(req,res);
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toRoleServlet").forward(req, res);
+                break;
+            case "/findAccounts.do":
+            case "/toAddAccount.do":
+            case "/addAccount.do":
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toAccountServlet").forward(req, res);
+                break;
+            case "/findServices.do":
+            case "/toAddService.do":
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toServiceServlet").forward(req, res);
+                break;
+            case "/findReports.do":
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toReportServlet").forward(req, res);
+                break;
+            case "/findBills.do":
+                req.setAttribute("path", path);
+                req.getRequestDispatcher("/toBillServlet").forward(req, res);
                 break;
             default:
                 throw new RuntimeException("查无此页面");
@@ -111,7 +128,7 @@ public class MainServlet extends HttpServlet {
 //            req.setAttribute("error", "验证码错误");
 //            req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
 //        } else
-            if (user == null) {
+        if (user == null) {
             //账号错误,转发到登陆界面
             req.setAttribute("error", "账号不存在");
             req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
