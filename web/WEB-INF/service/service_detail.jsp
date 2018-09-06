@@ -3,33 +3,21 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>达内－NetCTOSS</title>
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="styles/global.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css" />
     </head>
     <body>
-        <!--Logo区域开始-->
-        <div id="header">
-            <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
-        </div>
-        <!--Logo区域结束-->
-        <!--导航区域开始-->
-        <div id="navi">
-            <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_off"></a></li>
-                <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.jsp" class="account_off"></a></li>
-                <li><a href="service_list.jsp" class="service_off"></a></li>
-                <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
-                <li><a href="../report/report_list.jsp" class="report_off"></a></li>
-                <li><a href="../user/user_info.html" class="information_off"></a></li>
-                <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
-            </ul>
-        </div>
-        <!--导航区域结束-->
-        <!--主要区域开始-->
+    <!--Logo区域开始-->
+    <div id="header">
+        <%@ include file="../logo.jsp" %>
+    </div>
+    <!--Logo区域结束-->
+    <!--导航区域开始-->
+    <div id="navi">
+        <%@include file="../menu.jsp" %>
+    </div>
+    <!--导航区域结束-->
+    <!--主要区域开始-->
         <div id="main">            
             <form action="" method="" class="main_form">
                 <!--必填项-->
@@ -65,7 +53,7 @@
                 </div>  
                 <!--操作按钮-->
                 <div class="button_info clearfix">
-                    <input type="button" value="返回" class="btn_save" onclick="location.href='service_list.html';" />
+                    <input type="button" value="返回" class="btn_save" onclick="location.href='findAccounts.do'"/>
                 </div>
             </form>
         </div>

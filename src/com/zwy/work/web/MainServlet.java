@@ -70,11 +70,22 @@ public class MainServlet extends HttpServlet {
             case "/findAccounts.do":
             case "/toAddAccount.do":
             case "/addAccount.do":
+            case "/toModifyAccount.do":
+            case "/modifyAccount.do":
+            case "/deleteAccount.do":
+            case "/searchAccounts.do":
+            case "/accountDetail.do":
                 req.setAttribute("path", path);
                 req.getRequestDispatcher("/toAccountServlet").forward(req, res);
                 break;
             case "/findServices.do":
             case "/toAddService.do":
+            case "/addService.do":
+            case "/toModifyService.do":
+            case "/modifyService.do":
+            case "/deleteService.do":
+            case "/searchServices.do":
+            case "/serviceDetail.do":
                 req.setAttribute("path", path);
                 req.getRequestDispatcher("/toServiceServlet").forward(req, res);
                 break;

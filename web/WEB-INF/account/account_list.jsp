@@ -6,17 +6,28 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //删除
-        function deleteAccount() {
-            var r = window.confirm("确定要删除此账务账号吗？\r\n删除后将不能恢复，且会删除其下属的所有业务账号。");
-            document.getElementById("operate_result_info").style.display = "block";
+        function deleteAccount(accountId) {
+            var bool = window.confirm("确定要删除此账务账号吗？\r\n删除后将不能恢复，且会删除其下属的所有业务账号。");
+            // document.getElementById("operate_result_info").style.display = "block";
+            if (bool) {
+                location.href = "deleteAccount.do?accountId=" + accountId;
+            }
         }
 
         //开通或暂停
         function setState() {
             var r = window.confirm("确定要开通此账务账号吗？");
             document.getElementById("operate_result_info").style.display = "block";
+        }
+
+        function searchAccounts() {
+            location.href = 'searchAccounts.do?status=' + $("#status_search").val()
+                + '&idcard=' + $("#idcard_search").val()
+                + '&realname=' + $("#realname_search").val()
+                + '&loginname=' + $("#loginname_search").val();
         }
     </script>
 </head>
@@ -36,19 +47,19 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>身份证：<input type="text" value="不验证" class="text_search"/></div>
-            <div>姓名：<input type="text" class="width70 text_search" value="不验证"/></div>
-            <div>登录名：<input type="text" value="不验证" class="text_search" /></div>
+            <div>身份证：<input type="text" class="text_search" id="idcard_search" value="${idcard}"/></div>
+            <div>姓名：<input type="text" class="width70 text_search" id="realname_search" value="${realname}"/></div>
+            <div>登录名：<input type="text" class="text_search" id="loginname_search" value="${loginname}"/></div>
             <div>
                 状态：
-                <select class="select_search">
-                    <option>全部</option>
-                    <option>开通</option>
-                    <option>暂停</option>
-                    <option>删除</option>
+                <select class="select_search" id="status_search">
+                    <option value="0" ${status eq "0"?"selected":""}>全部</option>
+                    <option value="1" ${status eq "1"?"selected":""}>开通</option>
+                    <option value="2" ${status eq "2"?"selected":""}>暂停</option>
+                    <option value="3" ${status eq "3"?"selected":""}>删除</option>
                 </select>
             </div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="searchAccounts()"/></div>
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddAccount.do';"/>
         </div>
         <!--删除等的操作提示-->
@@ -70,20 +81,21 @@
                     <th class="width200"></th>
                 </tr>
                 <c:forEach items="${accounts}" var="accountItem">
-                <tr>
-                    <td>${accountItem.accountId}</td>
-                    <td><a href="account_detail.jsp">${accountItem.realName}</a></td>
-                    <td>${accountItem.idCard}</td>
-                    <td>${accountItem.loginName}</td>
-                    <td>${accountItem.status==0?"开通":"暂停"}</td>
-                    <td>${accountItem.createDate}</td>
-                    <td>2013-02-23 00:00:00</td>
-                    <td class="td_modi">
-                        <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
-                        <input type="button" value="修改" class="btn_modify" onclick="location.href='account_modi.jsp';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteAccount();"/>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>${accountItem.accountId}</td>
+                        <td><a href="accountDetail.do?id=${accountItem.accountId}">${accountItem.realName}</a></td>
+                        <td>${accountItem.idCard}</td>
+                        <td>${accountItem.loginName}</td>
+                        <td>${accountItem.status eq "1"?"开通":(accountItem.status eq "2"?"暂停":(accountItem.status eq "3"?"删除":""))}</td>
+                        <td>${accountItem.createDate}</td>
+                        <td>2013-02-23 00:00:00</td>
+                        <td class="td_modi">
+                            <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
+                            <input type="button" value="修改" class="btn_modify"
+                                   onclick="location.href='toModifyAccount.do?accountId='+${accountItem.accountId}"/>
+                            <input type="button" value="删除" class="btn_delete" onclick="deleteAccount(${accountItem.accountId});"/>
+                        </td>
+                    </tr>
                 </c:forEach>
             </table>
             <p>业务说明：<br/>
@@ -97,20 +109,21 @@
         </div>
         <div id="pages">
             <c:if test="${currentPage>1}">
-                <a href="findAccounts.do?currentPage=${currentPage-1}">上一页</a>
+                <a href=${path}?currentPage=${currentPage-1}&status=${status}&idcard=${idcard}&realname=${realname}&loginname=${loginname}>上一页</a>
             </c:if>
             <c:forEach begin="1" end="${pageCount}" var="p">
                 <c:choose>
                     <c:when test="${p==currentPage}">
-                        <a href="findAccounts.do?currentPage=${p}" class="current_page">${p}</a>
+                        <a href=${path}?currentPage=${p}&status=${status}&idcard=${idcard}&realname=${realname}&loginname=${loginname}
+                           class="current_page">${p}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="findAccounts.do?currentPage=${p}">${p}</a>
+                        <a href=${path}?currentPage=${p}&status=${status}&idcard=${idcard}&realname=${realname}&loginname=${loginname}>${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage<pageCount}">
-                <a href="findAccounts.do?currentPage=${currentPage+1}">下一页</a>
+                <a href=${path}?currentPage=${currentPage+1}&status=${status}&idcard=${idcard}&realname=${realname}&loginname=${loginname}>下一页</a>
             </c:if>
         </div>
     </form>
@@ -120,5 +133,13 @@
     <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
+<script>
+    if (${param.deleteSuccess==1}) {
+        $("#operate_result_info").css("display", "block");
+        $("#operate_result_info").removeClass("operate_fail");
+        $("#operate_result_info").addClass("operate_success");
+        $("#operate_result_info").children("span").html("删除账务账号成功");
+    }
+</script>
 </body>
 </html>

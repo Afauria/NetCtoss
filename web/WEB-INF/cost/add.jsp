@@ -7,19 +7,21 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //保存结果的提示
-        function showResult() {
-            showResultDiv(true);
-            window.setTimeout("showResultDiv(false);", 3000);
+        function showResult(msg) {
+            showResultDiv(true,msg);
+            window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag) {
-            var divResult = document.getElementById("save_result_info");
-            if (flag)
-                divResult.style.display = "block";
-            else
-                divResult.style.display = "none";
+        function showResultDiv(flag,msg) {
+            if (flag){
+                $("#save_result_info").text(msg);
+                $("#save_result_info").css("display","block");
+            } else{
+                $("#save_result_info").css("display","none");
+            }
         }
 
         //切换资费类型
@@ -54,6 +56,50 @@
                 inputArray[6].className = "width100";
             }
         }
+
+        function validate() {
+            $(".required").siblings("input").each(function () {
+                if ($(this).val() == "") {
+                    $(this).siblings(".validate_msg").addClass("error_msg");
+                    return false;
+                } else {
+                    $(this).siblings(".validate_msg").removeClass("error_msg");
+                }
+            });
+            numValidate(1, $("input[name=baseDuration]"))
+            numValidate(2, $("input[name=baseCost]"))
+            numValidate(2, $("input[name=unitCost]"))
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function numValidate(rule, obj) {
+            var num = $(obj).val();
+            if ($(obj).hasClass("readonly")) {
+                $(obj).siblings(".validate_msg").removeClass("error_msg");
+                return false;
+            }
+            if (rule == 1) {
+                var reg = new RegExp("^[0-9]*[1-9][0-9]*$");
+                if (reg.test(num) && parseInt(num) <= 600) {
+                    $(obj).siblings(".validate_msg").removeClass("error_msg");
+                } else {
+                    $(obj).siblings(".validate_msg").addClass("error_msg");
+                }
+            }
+            else {
+                var reg = new RegExp("^\\d+(\\.\\d+)?$");
+                if (reg.test(num) && parseFloat(num) <= 99999.99) {
+                    $(obj).siblings(".validate_msg").removeClass("error_msg");
+                } else {
+                    $(obj).siblings(".validate_msg").addClass("error_msg");
+                }
+            }
+
+        }
     </script>
 </head>
 <body>
@@ -70,12 +116,12 @@
 <!--主要区域开始-->
 <div id="main">
     <div id="save_result_info" class="save_fail">保存失败，资费名称重复！</div>
-    <form action="addCost.do" method="post" class="main_form">
+    <form action="addCost.do" method="post" class="main_form" onsubmit="return validate()">
         <div class="text_info clearfix"><span>资费名称：</span></div>
         <div class="input_info">
             <input type="text" class="width300" name="costName"/>
             <span class="required">*</span>
-            <div class="validate_msg_short">50长度的字母、数字、汉字和下划线的组合</div>
+            <div class="validate_msg_short validate_msg">50长度的字母、数字、汉字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>资费类型：</span></div>
         <div class="input_info fee_type">
@@ -88,24 +134,24 @@
         </div>
         <div class="text_info clearfix"><span>基本时长：</span></div>
         <div class="input_info">
-            <input type="text" name="baseDuration" class="width100"/>
+            <input type="text" name="baseDuration" class="width100" onkeyup="numValidate(1,this)"/>
             <span class="info">小时</span>
             <span class="required">*</span>
-            <div class="validate_msg_long">1-600之间的整数</div>
+            <div class="validate_msg_long validate_msg">1-600之间的整数</div>
         </div>
         <div class="text_info clearfix"><span>基本费用：</span></div>
         <div class="input_info">
-            <input type="text" name="baseCost" class="width100"/>
+            <input type="text" name="baseCost" class="width100" onkeyup="numValidate(2,this)"/>
             <span class="info">元</span>
             <span class="required">*</span>
-            <div class="validate_msg_long">0-99999.99之间的数值</div>
+            <div class="validate_msg_long validate_msg">0-99999.99之间的数值</div>
         </div>
         <div class="text_info clearfix"><span>单位费用：</span></div>
         <div class="input_info">
-            <input type="text" name="unitCost" class="width100"/>
+            <input type="text" name="unitCost" class="width100" onkeyup="numValidate(2,this)"/>
             <span class="info">元/小时</span>
             <span class="required">*</span>
-            <div class="validate_msg_long">0-99999.99之间的数值</div>
+            <div class="validate_msg_long validate_msg">0-99999.99之间的数值</div>
         </div>
         <div class="text_info clearfix"><span>资费说明：</span></div>
         <div class="input_info_high">
@@ -114,7 +160,7 @@
         </div>
         <div class="button_info clearfix">
             <input type="submit" value="保存" class="btn_save"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='findCosts.do'"/>
         </div>
     </form>
 </div>
@@ -124,6 +170,11 @@
     <br/>
     <span>版权所有(C)加拿大达内IT培训集团公司 </span>
 </div>
+<script>
+    if (${param.error!=null}) {
+        showResult(${param.error});
+    }
+</script>
 </body>
 </html>
     

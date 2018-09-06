@@ -82,7 +82,7 @@ public class CostDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("根据id查找信息失败:" + e.getMessage(), e);
+            throw new RuntimeException("根据id查找资费失败:" + e.getMessage(), e);
         } finally {
             DBUtils.close(conn);
         }
@@ -131,9 +131,29 @@ public class CostDao {
         }
     }
 
+    public Cost findCostByName(String costName) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "SELECT * FROM cost WHERE name=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, costName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return createCostEntity(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("根据名称查找资费失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+        return null;
+    }
     public static void main(String[] args) {
         CostDao dao = new CostDao();
         Cost c = dao.findCostById(6);
         System.out.println(c);
     }
+
 }

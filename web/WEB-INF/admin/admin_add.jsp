@@ -25,20 +25,20 @@
         function validate() {
             var hasSelected = false;
             var isValidate=true;
-            $("input[name^='admin']").each(function () {
+            $(".required").prev().each(function () {
                 if ($(this).val() == "") {
-                    $(this).siblings(".validate_msg_long").addClass("error_msg");
+                    $(this).siblings(".validate_msg").addClass("error_msg");
                     isValidate=false;
                     return false;
                 } else {
-                    $(this).siblings(".validate_msg_long").removeClass("error_msg");
+                    $(this).siblings(".validate_msg").removeClass("error_msg");
                 }
             });
-            if($("input[name='adminPassword']").val() !=$("input[name='adminConfirmPassword']").val()){
-                $("input[name='adminConfirmPassword']").siblings(".validate_msg_long").addClass("error_msg");
+            if($("input[name='password']").val() !=$("input[name='confirmPassword']").val()){
+                $("input[name='confirmPassword']").siblings(".validate_msg").addClass("error_msg");
                 isValidate=false;
             }else{
-                $("input[name='adminConfirmPassword']").siblings(".validate_msg_long").removeClass("error_msg");
+                $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
 
             if(!isValidate){
@@ -52,10 +52,10 @@
                 }
             });
             if (!hasSelected) {
-                $(".validate_msg_tiny").addClass("error_msg");
+                $(".must_selected").addClass("error_msg");
                 return false;
             }else{
-                $(".validate_msg_tiny").removeClass("error_msg");
+                $(".must_selected").removeClass("error_msg");
             }
             showResult();
             return true;
@@ -81,37 +81,37 @@
         <div class="input_info">
             <input type="text" name="adminName"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
+            <div class="validate_msg_long validate_msg">20长度以内的汉字、字母、数字的组合</div>
         </div>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
             <input type="text" name="adminCode"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long validate_msg">30长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
-            <input type="password" name="adminPassword"/>
+            <input type="password" name="password"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long validate_msg">30长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input type="password" name="adminConfirmPassword"/>
+            <input type="password" name="confirmPassword" />
             <span class="required">*</span>
-            <div class="validate_msg_long">两次密码必须相同</div>
+            <div class="validate_msg_long validate_msg">两次密码必须相同</div>
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input type="text" class="width200" name="adminTelephone"/>
+            <input type="text" class="width200" name="telephone"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium validate_msg_long">正确的电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium validate_msg">正确的电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input type="text" class="width200" name="adminEmail"/>
+            <input type="text" class="width200" name="email" />
             <span class="required">*</span>
-            <div class="validate_msg_medium validate_msg_long">50长度以内，正确的 email 格式</div>
+            <div class="validate_msg_medium validate_msg">50长度以内，正确的 email 格式</div>
         </div>
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info_high">
@@ -124,12 +124,12 @@
                     </c:forEach>
                 </ul>
             </div>
-            <span class="required">*</span>
-            <div class="validate_msg_tiny">至少选择一个</div>
+            <span style="color:red;font-size: 10pt">*</span>
+            <div class="validate_msg_tiny validate_msg must_selected">至少选择一个</div>
         </div>
         <div class="button_info clearfix">
             <input type="submit" value="保存" class="btn_save"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='findAdmins.do'"/>
         </div>
     </form>
 </div>

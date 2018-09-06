@@ -54,7 +54,7 @@
         </div>
         <div class="button_info clearfix">
             <input type="submit" value="保存" class="btn_save" onclick="showResult();"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='toIndex.do'"/>
         </div>
     </form>
     <div style="margin:auto;font-size: 20pt;color: red;text-align: center">${error}</div>

@@ -41,7 +41,7 @@ public class AdminServlet extends HttpServlet {
                 findAdmins(req, res);
                 break;
             case "/searchAdmins.do":
-                searchAdmins(req,res);
+                searchAdmins(req, res);
                 break;
             case "/toModifyAdmin.do":
                 toModifyAdmin(req, res);
@@ -154,13 +154,15 @@ public class AdminServlet extends HttpServlet {
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
-        admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
+        admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ?
+                lastPageCostCount : singlePageLimit));
         ModuleDao moduleDao = new ModuleDao();
         List<Module> totalModules = moduleDao.findModules();
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("pageCount", pageCount);
         req.setAttribute("admins", admins);
         req.setAttribute("totalModules", totalModules);
+        req.setAttribute("path", "findAdmins.do");
         req.getRequestDispatcher("WEB-INF/admin/admin_list.jsp").forward(req, res);
     }
 
@@ -172,7 +174,7 @@ public class AdminServlet extends HttpServlet {
         String moduleName = req.getParameter("moduleName");
         String roleName = req.getParameter("roleName");
         req.setAttribute("moduleName", moduleName);
-        req.setAttribute("roleName",roleName);
+        req.setAttribute("roleName", roleName);
         AdminDao dao = new AdminDao();
         List<Admin> admins = dao.searchAdmins(moduleName, roleName);
         RoleDao roleDao = new RoleDao();
@@ -189,15 +191,18 @@ public class AdminServlet extends HttpServlet {
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
-        admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
+        admins = admins.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ?
+                lastPageCostCount : singlePageLimit));
         ModuleDao moduleDao = new ModuleDao();
         List<Module> totalModules = moduleDao.findModules();
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("pageCount", pageCount);
         req.setAttribute("admins", admins);
         req.setAttribute("totalModules", totalModules);
+        req.setAttribute("path", "searchAdmins.do");
         req.getRequestDispatcher("WEB-INF/admin/admin_list.jsp").forward(req, res);
     }
+
     private void toModifyAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         if (req.getParameter("adminId") == null) {
             throw new RuntimeException("管理员id不能为空");
@@ -249,8 +254,8 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void addAdmin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String password = req.getParameter("adminPassword");
-        String confirmPassword = req.getParameter("adminConfirmPassword");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
         if (!password.equals(confirmPassword)) {
             req.setAttribute("error", "两次密码输入不一致");
             req.getRequestDispatcher("toAddAdmin.do").forward(req, res);
@@ -258,13 +263,14 @@ public class AdminServlet extends HttpServlet {
         }
         String adminCode = req.getParameter("adminCode");
         AdminDao adminDao = new AdminDao();
-        List<Admin> admins = adminDao.findAdmins();
-        for (Admin admin : admins) {
-            if (admin.getAdminCode().equals(adminCode)) {
-                res.sendRedirect("toAddAdmin.do?error='该用户已存在'");
-                return;
-            }
+        Admin a = adminDao.findUserByCode(adminCode);
+        if (a!=null) {
+            String errorMsg = "该用户已存在";
+            errorMsg = new String(errorMsg.getBytes("UTF-8"), "iso-8859-1");
+            res.sendRedirect("toAddAdmin.do?error='" + errorMsg + "'");
+            return;
         }
+
         String[] selectRolesId = req.getParameterValues("selectRolesId");
         List<Role> selectRoles = new ArrayList<>();
         RoleDao roleDao = new RoleDao();
@@ -273,8 +279,8 @@ public class AdminServlet extends HttpServlet {
             selectRoles.add(role);
         }
         String adminName = req.getParameter("adminName");
-        String telephone = req.getParameter("adminTelephone");
-        String email = req.getParameter("adminEmail");
+        String telephone = req.getParameter("telephone");
+        String email = req.getParameter("email");
         Admin admin = new Admin();
         admin.setAdminCode(adminCode);
         admin.setAdminRoles(selectRoles);

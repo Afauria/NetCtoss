@@ -3,17 +3,14 @@ package com.zwy.work.dao;
 import com.zwy.work.entity.Service;
 import com.zwy.work.util.DBUtils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceDao {
 
     private Service createService(ResultSet rs) throws SQLException {
-        Service service=new Service();
+        Service service = new Service();
         service.setServiceId(rs.getInt("service_id"));
         service.setAccountId(rs.getInt("account_id"));
         service.setUnixHost(rs.getString("unix_host"));
@@ -26,6 +23,7 @@ public class ServiceDao {
         service.setCostId(rs.getInt("cost_id"));
         return service;
     }
+
     public List<Service> findServices() {
         Connection conn = null;
         try {
@@ -47,4 +45,124 @@ public class ServiceDao {
         }
     }
 
+    public Service findServiceById(int serviceId) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+
+            String sql = "SELECT * FROM service where service_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Service service = createService(rs);
+                return service;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("查询业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+        return null;
+    }
+
+    public void deleteService(Integer serviceId) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "delete from service where service_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, serviceId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("删除业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public List<Service> searchServices(String status, String idcard, String username, String host) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql1 = "select * from service where status like ? " +
+                    "and os_username like ? and unix_host like ? order by service_id;";
+            String sql2 = "select * from service where status like ? " +
+                    "and os_username like ? and unix_host like ? " +
+                    "and service_id in (select service_id from service, account where account.account_id=service.account_id and idcard_no like ?)" +
+                    "order by service_id;";
+            PreparedStatement ps;
+            if (status.equals("0"))
+                status = "";
+            if (idcard.equals("")) {
+                ps = conn.prepareStatement(sql1);
+                ps.setString(1, "%" + status + "%");
+                ps.setString(2, "%" + username + "%");
+                ps.setString(3, "%" + host + "%");
+            } else {
+                ps = conn.prepareStatement(sql2);
+                ps.setString(1, "%" + status + "%");
+                ps.setString(2, "%" + username + "%");
+                ps.setString(3, "%" + host + "%");
+                ps.setString(4, "%" + idcard + "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Service> services = new ArrayList<Service>();
+            while (rs.next()) {
+                Service service = createService(rs);
+                services.add(service);
+            }
+            return services;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("查询业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public void addService(Service service) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "insert into service(account_id,cost_id,unix_host,os_username,login_passwd,status) " +
+                    "values(?,?,?,?,?,'1')";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, service.getAccountId());
+            ps.setInt(2, service.getCostId());
+            ps.setString(3, service.getUnixHost());
+            ps.setString(4, service.getOsUsername());
+            ps.setString(5, service.getLoginPasswd());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("添加业务账户失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public Service findServiceByOsUserame(String osUsername) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+
+            String sql = "SELECT * FROM service where os_username=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, osUsername);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Service service = createService(rs);
+                return service;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("查询业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+        return null;
+    }
 }

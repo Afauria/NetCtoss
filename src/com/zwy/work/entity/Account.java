@@ -1,7 +1,7 @@
 package com.zwy.work.entity;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Account {
     private int accountId;
@@ -19,8 +19,14 @@ public class Account {
     private String occupation;
     private String telephone;
     private String email;
+    private String mailAddress;
+    private String zipcode;
+    private String QQ;
+    private Account recommender;
 
-    public Account(int accountId, int recommenderId, String loginName, String loginPasswd, String status, Timestamp createDate, Timestamp pauseDate, Timestamp closeDate, String realName, String idCard, Date birthdate, String gender, String occupation, String telephone, String email) {
+    public Account(int accountId, int recommenderId, String loginName, String loginPasswd, String status, Timestamp createDate, Timestamp
+            pauseDate, Timestamp closeDate, String realName, String idCard, Date birthdate, String gender, String occupation, String telephone,
+                   String email, String mailAddress, String zipcode, String QQ, Account recommender) {
         this.accountId = accountId;
         this.recommenderId = recommenderId;
         this.loginName = loginName;
@@ -36,6 +42,10 @@ public class Account {
         this.occupation = occupation;
         this.telephone = telephone;
         this.email = email;
+        this.mailAddress = mailAddress;
+        this.zipcode = zipcode;
+        this.QQ = QQ;
+        this.recommender = recommender;
     }
 
     public Account() {
@@ -159,5 +169,37 @@ public class Account {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Account getRecommender() {
+        return recommender;
+    }
+
+    public void setRecommender(Account recommender) {
+        this.recommender = recommender;
+    }
+
+    public String getMailAddress() {
+        return mailAddress;
+    }
+
+    public void setMailAddress(String mailAddress) {
+        this.mailAddress = mailAddress;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    public String getQQ() {
+        return QQ;
+    }
+
+    public void setQQ(String QQ) {
+        this.QQ = QQ;
     }
 }

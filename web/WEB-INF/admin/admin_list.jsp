@@ -56,7 +56,7 @@
             }
         }
         function searchAdmins() {
-            location.href='searchAdmins.do?moduleName='+$("#selModules").val()+"&roleName="+$(".text_search").val();
+            location.href='searchAdmins.do?moduleName='+$("#selModules").val()+"&roleName="+$("#rolename_search").val();
         }
     </script>
 </head>
@@ -85,7 +85,7 @@
                     </c:forEach>
                 </select>
             </div>
-            <div>角色：<input type="text" value="${roleName}" class="text_search width200"/></div>
+            <div>角色：<input type="text" value="${roleName}" class="text_search width200" id="rolename_search"/></div>
             <div><input type="button" value="搜索" class="btn_search" onclick="searchAdmins()"/></div>
             <input type="submit" value="密码重置" class="btn_add" />
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddAdmin.do';"/>
@@ -154,20 +154,20 @@
         <!--分页-->
         <div id="pages">
             <c:if test="${currentPage>1}">
-                <a href="findAdmins.do?currentPage=${currentPage-1}">上一页</a>
+                <a href=${path}?currentPage=${currentPage-1}&moduleName=${moduleName}&roleName=${roleName}>上一页</a>
             </c:if>
             <c:forEach begin="1" end="${pageCount}" var="p">
                 <c:choose>
                     <c:when test="${p==currentPage}">
-                        <a href="findAdmins.do?currentPage=${p}" class="current_page">${p}</a>
+                        <a href=${path}?currentPage=${p}&moduleName=${moduleName}&roleName=${roleName} class="current_page">${p}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="findAdmins.do?currentPage=${p}">${p}</a>
+                        <a href=${path}?currentPage=${p}&moduleName=${moduleName}&roleName=${roleName}>${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage<pageCount}">
-                <a href="findAdmins.do?currentPage=${currentPage+1}">下一页</a>
+                <a href=${path}?currentPage=${currentPage+1}&moduleName=${moduleName}&roleName=${roleName}>下一页</a>
             </c:if>
         </div>
     </form>

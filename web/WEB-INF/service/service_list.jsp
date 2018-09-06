@@ -6,6 +6,7 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //显示角色详细信息
         function showDetail(flag, a) {
@@ -18,15 +19,25 @@
         }
 
         //删除
-        function deleteAccount() {
-            var r = window.confirm("确定要删除此业务账号吗？删除后将不能恢复。");
-            document.getElementById("operate_result_info").style.display = "block";
+        function deleteService(serviceId) {
+            var bool = window.confirm("确定要删除此业务账号吗？删除后将不能恢复。");
+            // document.getElementById("operate_result_info").style.display = "block";
+            if (bool) {
+                location.href = "deleteService.do?serviceId=" + serviceId;
+            }
         }
 
         //开通或暂停
         function setState() {
             var r = window.confirm("确定要开通此业务账号吗？");
             document.getElementById("operate_result_info").style.display = "block";
+        }
+
+        function searchServices() {
+            location.href = 'searchServices.do?status=' + $("#status_search").val()
+                + "&idcard=" + $("#idcard_search").val()
+                + "&username=" + $("#username_search").val()
+                + "&host=" + $("#host_search").val();
         }
     </script>
 </head>
@@ -46,18 +57,18 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>OS 账号：<input type="text" value="" class="width100 text_search"/></div>
-            <div>服务器 IP：<input type="text" value="" class="width100 text_search"/></div>
-            <div>身份证：<input type="text" value="" class="text_search"/></div>
+            <div>OS 账号：<input type="text" value="${username}" class="width100 text_search" id="username_search"/></div>
+            <div>服务器 IP：<input type="text" value="${host}" class="width100 text_search" id="host_search"/></div>
+            <div>身份证：<input type="text" value="${idcard}" class="text_search" id="idcard_search"/></div>
             <div>状态：
-                <select class="select_search">
-                    <option>全部</option>
-                    <option>开通</option>
-                    <option>暂停</option>
-                    <option>删除</option>
+                <select class="select_search" id="status_search">
+                    <option value="0" ${status eq "0"?"selected":""}>全部</option>
+                    <option value="1" ${status eq "1"?"selected":""}>开通</option>
+                    <option value="2" ${status eq "2"?"selected":""}>暂停</option>
+                    <option value="3" ${status eq "3"?"selected":""}>删除</option>
                 </select>
             </div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="searchServices()"/></div>
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddService.do';"/>
         </div>
         <!--删除的操作提示-->
@@ -81,12 +92,12 @@
                 </tr>
                 <c:forEach items="${services}" var="serviceItem">
                     <tr>
-                        <td><a href="service_detail.jsp" title="查看明细">${serviceItem.serviceId}</a></td>
+                        <td><a href="serviceDetail.do?id=${serviceItem.serviceId}" title="查看明细">${serviceItem.serviceId}</a></td>
                         <td>${serviceItem.accountId}</td>
                         <td>${serviceItem.account.idCard}</td>
                         <td>${serviceItem.account.realName}</td>
                         <td>${serviceItem.osUsername}</td>
-                        <td>${serviceItem.status==0?"开通":"暂停"}</td>
+                        <td>${serviceItem.status eq "1"?"开通":(serviceItem.status eq "2"?"暂停":(serviceItem.status eq "3"?"删除":""))}</td>
                         <td>${serviceItem.unixHost}</td>
                         <td>
                             <a class="summary" onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">
@@ -94,13 +105,14 @@
                             </a>
                             <!--浮动的详细信息-->
                             <div class="detail_info">
-                                ${serviceItem.cost.descr}
+                                    ${serviceItem.cost.descr}
                             </div>
                         </td>
                         <td class="td_modi">
                             <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
-                            <input type="button" value="修改" class="btn_modify" onclick="location.href='service_modi.jsp';"/>
-                            <input type="button" value="删除" class="btn_delete" onclick="deleteAccount();"/>
+                            <input type="button" value="修改" class="btn_modify"
+                                   onclick="location.href='toModifyService.do?serviceId='+${serviceItem.serviceId}"/>
+                            <input type="button" value="删除" class="btn_delete" onclick="deleteService(${serviceItem.serviceId});"/>
                         </td>
                     </tr>
                 </c:forEach>
@@ -115,20 +127,21 @@
         </div>
         <div id="pages">
             <c:if test="${currentPage>1}">
-                <a href="findServices.do?currentPage=${currentPage-1}">上一页</a>
+                <a href=${path}?currentPage=${currentPage-1}&status=${status}&idcard=${idcard}&username=${username}&host=${host}>上一页</a>
             </c:if>
             <c:forEach begin="1" end="${pageCount}" var="p">
                 <c:choose>
                     <c:when test="${p==currentPage}">
-                        <a href="findServices.do?currentPage=${p}" class="current_page">${p}</a>
+                        <a href=${path}?currentPage=${p}&status=${status}&idcard=${idcard}&username=${username}&host=${host}
+                           class="current_page">${p}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="findServices.do?currentPage=${p}">${p}</a>
+                        <a href=${path}?currentPage=${p}&status=${status}&idcard=${idcard}&username=${username}&host=${host}>${p}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
             <c:if test="${currentPage<pageCount}">
-                <a href="findServices.do?currentPage=${currentPage+1}">下一页</a>
+                <a href=${path}?currentPage=${currentPage+1}&status=${status}&idcard=${idcard}&username=${username}&host=${host}>下一页</a>
             </c:if>
         </div>
     </form>

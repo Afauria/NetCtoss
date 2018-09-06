@@ -35,7 +35,7 @@ public class CostServlet extends HttpServlet {
                 updateCost(req, res);
                 break;
             case "/costDetail.do":
-                findCostById(req, res);
+                costDetailById(req, res);
                 break;
             case "/deleteCost.do":
                 deleteCost(req, res);
@@ -57,14 +57,15 @@ public class CostServlet extends HttpServlet {
         List<Cost> costs = dao.findCosts();
         int costsCount = costs.size();
         int pageCount = costsCount / singlePageLimit + (costsCount % singlePageLimit > 0 ? 1 : 0);
-        if(pageCount==0){
-            pageCount=1;
+        if (pageCount == 0) {
+            pageCount = 1;
         }
         int lastPageCostCount = costsCount - (pageCount - 1) * singlePageLimit;
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
-        costs = costs.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
+        costs = costs.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ?
+                lastPageCostCount : singlePageLimit));
         //讲数据保存到HttpServletRequest对象上,并转发到JSP
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("pageCount", pageCount);
@@ -72,7 +73,7 @@ public class CostServlet extends HttpServlet {
         req.getRequestDispatcher("WEB-INF/cost/find.jsp").forward(req, res);
     }
 
-    private void findCostById(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    private void costDetailById(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         CostDao dao = new CostDao();
         Cost cost = dao.findCostById(Integer.parseInt(req.getParameter("id")));
         req.setAttribute("cost", cost);
@@ -93,7 +94,14 @@ public class CostServlet extends HttpServlet {
         String baseCost = req.getParameter("baseCost");
         String unitCost = req.getParameter("unitCost");
         String descr = req.getParameter("descr");
-        //封装
+        CostDao dao = new CostDao();
+        Cost cost = dao.findCostByName(name);
+        if (cost != null) {
+            String errorMsg = "保存失败，资费名称重复！";
+            errorMsg = new String(errorMsg.getBytes("UTF-8"), "iso-8859-1");
+            res.sendRedirect("toAddCost.do?error='" + errorMsg + "'");
+            return;
+        }
         Cost c = new Cost();
         c.setName(name);
         c.setCostType(costType);
@@ -107,7 +115,6 @@ public class CostServlet extends HttpServlet {
             c.setUnitCost(Double.parseDouble(unitCost));
         }
         c.setDescr(descr);
-        CostDao dao = new CostDao();
         dao.save(c);
         res.sendRedirect("findCosts.do");
     }
