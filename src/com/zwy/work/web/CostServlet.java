@@ -40,6 +40,9 @@ public class CostServlet extends HttpServlet {
             case "/deleteCost.do":
                 deleteCost(req, res);
                 break;
+            case "/setCostState.do":
+                setCostState(req,res);
+                break;
             default:
                 throw new RuntimeException("查无此页面");
         }
@@ -122,7 +125,7 @@ public class CostServlet extends HttpServlet {
 
     //打开资费修改页面
     private void toUpdateCost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+        int id = Integer.parseInt(req.getParameter("costId"));
         CostDao dao = new CostDao();
         Cost cost = dao.findCostById(id);
         req.setAttribute("cost", cost);
@@ -159,6 +162,24 @@ public class CostServlet extends HttpServlet {
         Integer costId = Integer.parseInt(req.getParameter("costId"));
         CostDao costDao = new CostDao();
         costDao.deleteCost(costId);
-        res.sendRedirect("findCosts.do?deleteSuccess=1");
+        String successMsg = "删除资费成功！";
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findCosts.do?success='" + successMsg + "'");
+    }
+
+    private void setCostState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        if (req.getParameter("costId") == null) {
+            throw new RuntimeException("资费id不能为空");
+        }
+        Integer costId = Integer.parseInt(req.getParameter("costId"));
+        String status=req.getParameter("status");
+        CostDao costDao = new CostDao();
+        costDao.setCostState(costId,status);
+        String successMsg = "启用资费成功！";
+        if(status.equals("1")){
+            successMsg="暂停资费成功！";
+        }
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findCosts.do?success='" + successMsg + "'");
     }
 }

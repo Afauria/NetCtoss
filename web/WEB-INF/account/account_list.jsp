@@ -18,9 +18,28 @@
         }
 
         //开通或暂停
-        function setState() {
-            var r = window.confirm("确定要开通此账务账号吗？");
-            document.getElementById("operate_result_info").style.display = "block";
+        function setState(accountId, status) {
+            var bool = false;
+            if (status == "3") {
+                alert("该账务账号已删除，无法修改！");
+            } else if (status == "2") {
+                bool = window.confirm("确定要开通此账务账号吗？");
+                status = "1";
+            } else {
+                bool = window.confirm("确定要暂停此账务账号吗？");
+                status = "2";
+            }
+            if (bool) {
+                location.href = "setAccountState.do?accountId=" + accountId + "&status=" + status;
+            }
+        }
+
+        function modifyAccount(accountId, status) {
+            if (status == "3") {
+                alert("该账务账号已删除，无法修改！");
+                return;
+            }
+            location.href = 'toModifyAccount.do?accountId=' + accountId;
         }
 
         function searchAccounts() {
@@ -63,9 +82,9 @@
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddAccount.do';"/>
         </div>
         <!--删除等的操作提示-->
-        <div id="operate_result_info" class="operate_success">
+        <div id="operate_result_info">
             <img src="images/close.png" onclick="this.parentNode.style.display='none';"/>
-            删除成功，且已删除其下属的业务账号！
+            <span>删除成功，且已删除其下属的业务账号！</span>
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
@@ -90,10 +109,13 @@
                         <td>${accountItem.createDate}</td>
                         <td>2013-02-23 00:00:00</td>
                         <td class="td_modi">
-                            <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
+                            <input type="button" value="${accountItem.status eq "1"?"暂停":"开通"}"
+                                   class="${accountItem.status eq "1"?"btn_pause":"btn_start"}"
+                                   onclick="setState(${accountItem.accountId},${accountItem.status});"/>
                             <input type="button" value="修改" class="btn_modify"
-                                   onclick="location.href='toModifyAccount.do?accountId='+${accountItem.accountId}"/>
-                            <input type="button" value="删除" class="btn_delete" onclick="deleteAccount(${accountItem.accountId});"/>
+                                   onclick="modifyAccount(${accountItem.accountId},${accountItem.status});"/>
+                            <input type="button" value="删除" class="btn_delete"
+                                   onclick="deleteAccount(${accountItem.accountId});"/>
                         </td>
                     </tr>
                 </c:forEach>
@@ -134,11 +156,10 @@
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
 <script>
-    if (${param.deleteSuccess==1}) {
+    if (${param.success!=null}) {
         $("#operate_result_info").css("display", "block");
-        $("#operate_result_info").removeClass("operate_fail");
         $("#operate_result_info").addClass("operate_success");
-        $("#operate_result_info").children("span").html("删除账务账号成功");
+        $("#operate_result_info").children("span").text(${param.success});
     }
 </script>
 </body>

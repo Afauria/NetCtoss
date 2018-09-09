@@ -8,7 +8,7 @@ public class Account {
     private int recommenderId;
     private String loginName;
     private String loginPasswd;
-    private String status;
+    private String status;//状态:1-开通,2-暂停,3-删除
     private Timestamp createDate;
     private Timestamp pauseDate;
     private Timestamp closeDate;
@@ -23,10 +23,12 @@ public class Account {
     private String zipcode;
     private String QQ;
     private Account recommender;
+    private Timestamp lastLoginTime;
+    private String lastLoginHost;
 
     public Account(int accountId, int recommenderId, String loginName, String loginPasswd, String status, Timestamp createDate, Timestamp
             pauseDate, Timestamp closeDate, String realName, String idCard, Date birthdate, String gender, String occupation, String telephone,
-                   String email, String mailAddress, String zipcode, String QQ, Account recommender) {
+                   String email, String mailAddress, String zipcode, String QQ, Account recommender, Timestamp lastLoginTime, String lastLoginHost) {
         this.accountId = accountId;
         this.recommenderId = recommenderId;
         this.loginName = loginName;
@@ -46,9 +48,27 @@ public class Account {
         this.zipcode = zipcode;
         this.QQ = QQ;
         this.recommender = recommender;
+        this.lastLoginTime = lastLoginTime;
+        this.lastLoginHost = lastLoginHost;
     }
 
     public Account() {
+    }
+
+    public Timestamp getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Timestamp lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
+    public String getLastLoginHost() {
+        return lastLoginHost;
+    }
+
+    public void setLastLoginHost(String lastLoginHost) {
+        this.lastLoginHost = lastLoginHost;
     }
 
     public int getAccountId() {

@@ -1,14 +1,17 @@
 package com.zwy.work.web;
 
-import com.zwy.work.dao.*;
-import com.zwy.work.entity.*;
+import com.zwy.work.dao.AccountDao;
+import com.zwy.work.dao.CostDao;
+import com.zwy.work.dao.ServiceDao;
+import com.zwy.work.entity.Account;
+import com.zwy.work.entity.Cost;
+import com.zwy.work.entity.Service;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServicesServlet extends HttpServlet {
@@ -44,6 +47,9 @@ public class ServicesServlet extends HttpServlet {
             case "/serviceDetail.do":
                 serviceDetailById(req, res);
                 break;
+            case "/setServiceState.do":
+                setServiceState(req, res);
+                break;
             default:
                 throw new RuntimeException("查无此页面");
         }
@@ -52,6 +58,12 @@ public class ServicesServlet extends HttpServlet {
     private void serviceDetailById(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         ServiceDao dao = new ServiceDao();
         Service service = dao.findServiceById(Integer.parseInt(req.getParameter("id")));
+        AccountDao accountDao = new AccountDao();
+        Account account = accountDao.findAccountById(service.getAccountId());
+        service.setAccount(account);
+        CostDao costDao = new CostDao();
+        Cost cost = costDao.findCostById(service.getCostId());
+        service.setCost(cost);
         req.setAttribute("service", service);
         req.getRequestDispatcher("WEB-INF/service/service_detail.jsp").forward(req, res);
     }
@@ -154,17 +166,14 @@ public class ServicesServlet extends HttpServlet {
             throw new RuntimeException("业务账号id不能为空");
         }
         Integer serviceId = Integer.parseInt(req.getParameter("serviceId"));
-        String roleName = req.getParameter("roleName");
-        String[] selectModulesId = req.getParameterValues("selectModulesId");
-        List<Module> selectModules = new ArrayList<>();
-        ModuleDao moduleDao = new ModuleDao();
-        for (String moduleId : selectModulesId) {
-            Module module = moduleDao.findModuleById(Integer.parseInt(moduleId));
-            selectModules.add(module);
-        }
-        Role role = new Role(serviceId, roleName, selectModules);
-        RoleDao roleDao = new RoleDao();
-        roleDao.updateRoleInfo(role);
+        Service service = new Service();
+        service.setServiceId(serviceId);
+        String costName = req.getParameter("costName");
+        CostDao costDao = new CostDao();
+        Cost cost = costDao.findCostByName(costName);
+        service.setCost(cost);
+        ServiceDao serviceDao = new ServiceDao();
+        serviceDao.updateService(service);
         res.sendRedirect("findServices.do");
     }
 
@@ -217,5 +226,21 @@ public class ServicesServlet extends HttpServlet {
         req.setAttribute("services", services);
         req.setAttribute("path", "searchServices.do");
         req.getRequestDispatcher("WEB-INF/service/service_list.jsp").forward(req, res);
+    }
+
+    private void setServiceState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        if (req.getParameter("serviceId") == null) {
+            throw new RuntimeException("业务账号id不能为空");
+        }
+        Integer serviceId = Integer.parseInt(req.getParameter("serviceId"));
+        String status = req.getParameter("status");
+        ServiceDao serviceDao = new ServiceDao();
+        serviceDao.setServiceState(serviceId, status);
+        String successMsg = "开通业务账号成功！";
+        if (status.equals("2")) {
+            successMsg = "暂停业务账号成功！";
+        }
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findServices.do?success='" + successMsg + "'");
     }
 }

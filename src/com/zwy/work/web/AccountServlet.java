@@ -45,14 +45,20 @@ public class AccountServlet extends HttpServlet {
             case "/accountDetail.do":
                 accountDetailById(req, res);
                 break;
+            case "/setAccountState.do":
+                setAccountState(req, res);
+                break;
             default:
                 throw new RuntimeException("查无此页面");
         }
     }
 
+
     private void accountDetailById(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         AccountDao dao = new AccountDao();
         Account account = dao.findAccountById(Integer.parseInt(req.getParameter("id")));
+        Account recommender = dao.findAccountById(account.getRecommenderId());
+        account.setRecommender(recommender);
         req.setAttribute("account", account);
         req.getRequestDispatcher("WEB-INF/account/account_detail.jsp").forward(req, res);
     }
@@ -194,7 +200,9 @@ public class AccountServlet extends HttpServlet {
         Integer accountId = Integer.parseInt(req.getParameter("accountId"));
         AccountDao accountDao = new AccountDao();
         accountDao.deleteAccount(accountId);
-        res.sendRedirect("findAccounts.do?deleteSuccess=1");
+        String successMsg = "删除账务账号成功！";
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findAccounts.do?success='" + successMsg + "'");
     }
 
     private void searchAccounts(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -228,5 +236,21 @@ public class AccountServlet extends HttpServlet {
         req.setAttribute("accounts", accounts);
         req.setAttribute("path", "searchAccounts.do");
         req.getRequestDispatcher("WEB-INF/account/account_list.jsp").forward(req, res);
+    }
+
+    private void setAccountState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        if (req.getParameter("accountId") == null) {
+            throw new RuntimeException("账务账号id不能为空");
+        }
+        Integer accountId = Integer.parseInt(req.getParameter("accountId"));
+        String status=req.getParameter("status");
+        AccountDao accountDao = new AccountDao();
+        accountDao.setAccountState(accountId,status);
+        String successMsg = "开通账务账号成功！";
+        if(status.equals("2")){
+            successMsg="暂停账务账号成功！";
+        }
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findAccounts.do?success='" + successMsg + "'");
     }
 }

@@ -70,6 +70,7 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = req.getSession();
         Object userCode = session.getAttribute("adminCode");
         if (userCode == null) {
+            session.removeAttribute("adminCode");
             throw new RuntimeException("用户未登录");
         }
         AdminDao adminDao = new AdminDao();
@@ -82,18 +83,24 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void updateUserInfo(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String adminCode = req.getParameter("adminCode");
+        HttpSession session = req.getSession();
+        Object adminCode = session.getAttribute("adminCode");
+        if (adminCode == null) {
+            throw new RuntimeException("用户未登录");
+        }
         String adminName = req.getParameter("adminName");
         String telephone = req.getParameter("telephone");
         String email = req.getParameter("email");
         Admin user = new Admin();
-        user.setAdminCode(adminCode);
+        user.setAdminCode(adminCode.toString());
         user.setAdminName(adminName);
         user.setTelephone(telephone);
         user.setEmail(email);
         AdminDao adminDao = new AdminDao();
         adminDao.updateUserInfo(user);
-        res.sendRedirect("findUserInfo.do");
+        String successMsg = "修改个人信息成功";
+        successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
+        res.sendRedirect("findUserInfo.do?success='" + successMsg + "'");
     }
 
     private void toModifyPwd(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -109,21 +116,13 @@ public class AdminServlet extends HttpServlet {
         String oldPwd = req.getParameter("oldPwd");
         String newPwd = req.getParameter("newPwd");
         String confirmPwd = req.getParameter("confirmPwd");
-        if (oldPwd == null || newPwd == null || confirmPwd == null ||
-                oldPwd.equals("") || newPwd.equals("") || confirmPwd.equals("")) {
-            req.setAttribute("error", "密码不能为空");
-            req.getRequestDispatcher("toModifyPwd.do").forward(req, res);
-            //需要return避免连续发两次forward，报错：Cannot forward after response has been committed
-            return;
-        }
+
         AdminDao adminDao = new AdminDao();
         Admin oldUser = adminDao.findUserByCode(adminCode.toString());
         if (!oldUser.getPassword().equals(oldPwd)) {
-            req.setAttribute("error", "旧密码错误");
-            req.getRequestDispatcher("toModifyPwd.do").forward(req, res);
-        } else if (!newPwd.equals(confirmPwd)) {
-            req.setAttribute("error", "两次密码输入不一致");
-            req.getRequestDispatcher("toModifyPwd.do").forward(req, res);
+            String errorMsg = "旧密码错误，请重新输入！";
+            errorMsg = new String(errorMsg.getBytes("UTF-8"), "iso-8859-1");
+            res.sendRedirect("toModifyPwd.do?error='" + errorMsg + "'");
         } else {
             Admin newUser = new Admin();
             newUser.setAdminCode(oldUser.getAdminCode());
@@ -264,7 +263,7 @@ public class AdminServlet extends HttpServlet {
         String adminCode = req.getParameter("adminCode");
         AdminDao adminDao = new AdminDao();
         Admin a = adminDao.findUserByCode(adminCode);
-        if (a!=null) {
+        if (a != null) {
             String errorMsg = "该用户已存在";
             errorMsg = new String(errorMsg.getBytes("UTF-8"), "iso-8859-1");
             res.sendRedirect("toAddAdmin.do?error='" + errorMsg + "'");

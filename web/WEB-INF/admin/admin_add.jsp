@@ -24,24 +24,24 @@
 
         function validate() {
             var hasSelected = false;
-            var isValidate=true;
+            var isValidate = true;
             $(".required").prev().each(function () {
                 if ($(this).val() == "") {
                     $(this).siblings(".validate_msg").addClass("error_msg");
-                    isValidate=false;
+                    isValidate = false;
                     return false;
                 } else {
                     $(this).siblings(".validate_msg").removeClass("error_msg");
                 }
             });
-            if($("input[name='password']").val() !=$("input[name='confirmPassword']").val()){
+            if ($("input[name='password']").val() != $("input[name='confirmPassword']").val()) {
                 $("input[name='confirmPassword']").siblings(".validate_msg").addClass("error_msg");
-                isValidate=false;
-            }else{
+                isValidate = false;
+            } else {
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
 
-            if(!isValidate){
+            if (!isValidate) {
                 return false;
             }
             $(".select_role").each(function () {
@@ -54,10 +54,9 @@
             if (!hasSelected) {
                 $(".must_selected").addClass("error_msg");
                 return false;
-            }else{
+            } else {
                 $(".must_selected").removeClass("error_msg");
             }
-            showResult();
             return true;
         }
     </script>
@@ -97,7 +96,7 @@
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input type="password" name="confirmPassword" />
+            <input type="password" name="confirmPassword"/>
             <span class="required">*</span>
             <div class="validate_msg_long validate_msg">两次密码必须相同</div>
         </div>
@@ -109,7 +108,7 @@
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input type="text" class="width200" name="email" />
+            <input type="text" class="width200" name="email"/>
             <span class="required">*</span>
             <div class="validate_msg_medium validate_msg">50长度以内，正确的 email 格式</div>
         </div>

@@ -9,16 +9,16 @@
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
         function showResult(msg) {
-            showResultDiv(true,msg);
+            showResultDiv(true, msg);
             window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag,msg) {
-            if (flag){
+        function showResultDiv(flag, msg) {
+            if (flag) {
                 $("#save_result_info").text(msg);
-                $("#save_result_info").css("display","block");
-            } else{
-                $("#save_result_info").css("display","none");
+                $("#save_result_info").css("display", "block");
+            } else {
+                $("#save_result_info").css("display", "none");
             }
         }
 
@@ -64,7 +64,6 @@
             if (!isValidate) {
                 return false;
             }
-            showResult();
             return true;
         }
     </script>

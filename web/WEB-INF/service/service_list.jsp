@@ -28,9 +28,28 @@
         }
 
         //开通或暂停
-        function setState() {
-            var r = window.confirm("确定要开通此业务账号吗？");
-            document.getElementById("operate_result_info").style.display = "block";
+        function setState(serviceId, status) {
+            var bool = false;
+            if (status == "3") {
+                alert("该业务账号已删除，无法修改！");
+            } else if (status == "2") {
+                bool = window.confirm("确定要开通此业务账号吗？");
+                status = "1";
+            } else {
+                bool = window.confirm("确定要暂停此业务账号吗？");
+                status = "2";
+            }
+            if (bool) {
+                location.href = "setServiceState.do?serviceId=" + serviceId + "&status=" + status;
+            }
+        }
+
+        function modifyService(serviceId, status) {
+            if (status == "3") {
+                alert("该业务账号已删除，无法修改！");
+                return;
+            }
+            location.href = 'toModifyService.do?serviceId=' + serviceId;
         }
 
         function searchServices() {
@@ -74,7 +93,7 @@
         <!--删除的操作提示-->
         <div id="operate_result_info" class="operate_success">
             <img src="images/close.png" onclick="this.parentNode.style.display='none';"/>
-            删除成功！
+            <span>删除成功！</span>
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
@@ -109,10 +128,13 @@
                             </div>
                         </td>
                         <td class="td_modi">
-                            <input type="button" value="暂停" class="btn_pause" onclick="setState();"/>
+                            <input type="button" value="${serviceItem.status eq "1"?"暂停":"开通"}"
+                                   class="${serviceItem.status eq "1"?"btn_pause":"btn_start"}"
+                                   onclick="setState(${serviceItem.serviceId},${serviceItem.status});"/>
                             <input type="button" value="修改" class="btn_modify"
-                                   onclick="location.href='toModifyService.do?serviceId='+${serviceItem.serviceId}"/>
-                            <input type="button" value="删除" class="btn_delete" onclick="deleteService(${serviceItem.serviceId});"/>
+                                   onclick="modifyService(${serviceItem.serviceId},${serviceItem.status});"/>
+                            <input type="button" value="删除" class="btn_delete"
+                                   onclick="deleteService(${serviceItem.serviceId});"/>
                         </td>
                     </tr>
                 </c:forEach>
@@ -151,5 +173,12 @@
     <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
+<script>
+    if (${param.success!=null}) {
+        $("#operate_result_info").css("display", "block");
+        $("#operate_result_info").addClass("operate_success");
+        $("#operate_result_info").children("span").text(${param.success});
+    }
+</script>
 </body>
 </html>

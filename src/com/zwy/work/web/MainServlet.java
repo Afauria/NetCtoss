@@ -40,6 +40,7 @@ public class MainServlet extends HttpServlet {
             case "/updateCost.do":
             case "/costDetail.do":
             case "/deleteCost.do":
+            case "/setCostState.do":
                 req.setAttribute("path", path);
                 req.getRequestDispatcher("/toCostServlet").forward(req, res);
                 break;
@@ -75,6 +76,7 @@ public class MainServlet extends HttpServlet {
             case "/deleteAccount.do":
             case "/searchAccounts.do":
             case "/accountDetail.do":
+            case "/setAccountState.do":
                 req.setAttribute("path", path);
                 req.getRequestDispatcher("/toAccountServlet").forward(req, res);
                 break;
@@ -86,6 +88,7 @@ public class MainServlet extends HttpServlet {
             case "/deleteService.do":
             case "/searchServices.do":
             case "/serviceDetail.do":
+            case "/setServiceState.do":
                 req.setAttribute("path", path);
                 req.getRequestDispatcher("/toServiceServlet").forward(req, res);
                 break;

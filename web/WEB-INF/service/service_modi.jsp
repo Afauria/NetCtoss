@@ -21,6 +21,7 @@
             else
                 divResult.style.display = "none";
         }
+
         function validate() {
             return true;
         }
@@ -45,7 +46,7 @@
         <!--必填项-->
         <div class="text_info clearfix"><span>业务账号ID：</span></div>
         <div class="input_info">
-            <input type="text" value="${service.serviceId}" readonly class="readonly"/>
+            <input type="text" value="${service.serviceId}" readonly class="readonly" name="serviceId"/>
         </div>
         <div class="text_info clearfix"><span>OS 账号：</span></div>
         <div class="input_info">
@@ -66,7 +67,7 @@
         </div>
         <!--操作按钮-->
         <div class="button_info clearfix">
-            <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
+            <input type="submit" value="保存" class="btn_save"/>
             <input type="button" value="取消" class="btn_save" onclick="location.href='findServices.do'"/>
         </div>
 

@@ -7,19 +7,51 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
-        function showResult() {
-            showResultDiv(true);
-            window.setTimeout("showResultDiv(false);", 3000);
+        function showResult(msg) {
+            showResultDiv(true,msg);
+            window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag) {
-            var divResult = document.getElementById("save_result_info");
-            if (flag)
-                divResult.style.display = "block";
-            else
-                divResult.style.display = "none";
+        function showResultDiv(flag,msg) {
+            if (flag) {
+                $("#save_result_info").text(msg);
+                $("#save_result_info").css("display", "block");
+            } else {
+                $("#save_result_info").css("display", "none");
+            }
+        }
+        function validate() {
+            var isValidate = true;
+            $(".required").prev().each(function () {
+                if ($(this).val() == "") {
+                    $(this).siblings(".validate_msg").addClass("error_msg");
+                    isValidate = false;
+                    return false;
+                } else {
+                    $(this).siblings(".validate_msg").removeClass("error_msg");
+                }
+            });
+            if (!isValidate) {
+                return false;
+            }
+            var isPhoneValidate=phoneValidate($("input[name=telephone]").val());
+            return isPhoneValidate;
+        }
+        function phoneValidate(phonenum) {
+            if(phonenum==""){
+                return true;
+            }
+            var reg=/^[1][3,4,5,7,8][0-9]{9}$/;
+            if (!reg.test(phonenum)) {
+                $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
+                return false;
+            } else {
+                $("input[name=telephone]").siblings(".validate_msg").removeClass("error_msg");
+                return true;
+            }
         }
     </script>
 </head>
@@ -38,7 +70,7 @@
 <div id="main">
     <!--保存操作后的提示信息：成功或者失败-->
     <div id="save_result_info" class="save_success">保存成功！</div><!--保存失败，数据并发错误！-->
-    <form action="updateUserInfo.do" method="" class="main_form">
+    <form action="updateUserInfo.do" method="" class="main_form" onsubmit="return validate()">
         <%
             Admin userInfo = (Admin) request.getAttribute("userInfo");
             StringBuilder rolesStr=new StringBuilder();
@@ -60,24 +92,24 @@
         <div class="input_info">
             <input type="text" value="<%= userInfo.getAdminName() %>" name="adminName"/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">20长度以内的汉字、字母的组合</div>
+            <div class="validate_msg_long validate_msg">20长度以内的汉字、字母的组合</div>
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
             <input type="text" class="width200" value="<%= userInfo.getTelephone() %>" name="telephone" />
-            <div class="validate_msg_medium">电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium validate_msg">电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
             <input type="text" class="width200" value="<%= userInfo.getEmail() %>" name="email"/>
-            <div class="validate_msg_medium">50长度以内，符合 email 格式</div>
+            <div class="validate_msg_medium validate_msg">50长度以内，符合 email 格式</div>
         </div>
         <div class="text_info clearfix"><span>创建时间：</span></div>
         <div class="input_info">
             <input type="text" readonly="readonly" class="readonly" value="<%= userInfo.getEnrolldate() %>"/>
         </div>
         <div class="button_info clearfix">
-            <input type="submit" value="保存" class="btn_save" onclick="showResult();"/>
+            <input type="submit" value="保存" class="btn_save"/>
             <input type="button" value="取消" class="btn_save" onclick="location.href='toIndex.do'"/>
         </div>
     </form>
@@ -87,5 +119,10 @@
     <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
+<script>
+    if (${param.success!=null}) {
+        showResult(${param.success});
+    }
+</script>
 </body>
 </html>

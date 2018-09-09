@@ -10,6 +10,7 @@
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //排序按钮的点击事件
         function sort(btnObj) {
@@ -20,17 +21,41 @@
         }
 
         //启用
-        function startFee() {
-            var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
-            document.getElementById("operate_result_info").style.display = "block";
+        function startFee(costId, status) {
+            var bool = false;
+            if (status == "1") {
+                bool = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
+                status = "0";
+            } else {
+                // bool = window.confirm("确定要暂停此资费吗？");
+                // status = "1";
+                alert("资费启用中，无法暂停！");
+                return;
+            }
+            if (bool) {
+                location.href = "setCostState.do?costId=" + costId + "&status=" + status;
+            }
         }
 
         //删除
-        function deleteFee(costId) {
+        function deleteFee(costId,status) {
+            if(status=="0"){
+                alert("资费启用中，无法删除！");
+                return;
+            }
             var bool = window.confirm("确定要删除此资费吗？");
             if (bool) {
                 location.href = "deleteCost.do?costId=" + costId;
             }
+        }
+
+        //删除
+        function modifyFee(costId,status) {
+            if(status=="0"){
+                alert("资费启用中，无法修改！");
+                return;
+            }
+            location.href = "toUpdateCost.do?costId=" + costId;
         }
     </script>
 </head>
@@ -58,7 +83,7 @@
             <input type="button" value="增加" class="btn_add" onclick="location.href='toAddCost.do';"/>
         </div>
         <!--启用操作的操作提示-->
-        <div id="operate_result_info" class="operate_success">
+        <div id="operate_result_info">
             <img src="images/close.png" onclick="this.parentNode.style.display='none';"/>
             <span>删除成功！</span>
         </div>
@@ -98,10 +123,13 @@
                     <td><%= costItem.getStatus().equals("1") ? "暂停" : "开通" %>
                     </td>
                     <td>
-                        <input type="button" value="启用" class="btn_start" onclick="startFee();"/>
+                        <input type="button" value="<%= costItem.getStatus().equals("1")?"启用":"暂停" %> "
+                               class="<%= costItem.getStatus().equals("1")?"btn_start":"btn_pause" %>"
+                               onclick="startFee(<%=costItem.getCostId()%>,<%= costItem.getStatus()%>);"/>
                         <input type="button" value="修改" class="btn_modify"
-                               onclick="location.href='toUpdateCost.do?id=<%=costItem.getCostId()%>';"/>
-                        <input type="button" value="删除" class="btn_delete" onclick="deleteFee(<%=costItem.getCostId()%>);"/>
+                               onclick="modifyFee(<%=costItem.getCostId()%>,<%= costItem.getStatus()%>)"/>
+                        <input type="button" value="删除" class="btn_delete"
+                               onclick="deleteFee(<%=costItem.getCostId()%>,<%= costItem.getStatus()%>);"/>
                     </td>
                 </tr>
                 <%
@@ -154,8 +182,10 @@
     <p>版权所有(C)加拿大达内IT培训集团公司 </p>
 </div>
 <script>
-    if (${param.deleteSuccess==1}) {
-        document.getElementById("operate_result_info").style.display = "block";
+    if (${param.success!=null}) {
+        $("#operate_result_info").css("display", "block");
+        $("#operate_result_info").addClass("operate_success");
+        $("#operate_result_info").children("span").text(${param.success});
     }
 </script>
 </body>

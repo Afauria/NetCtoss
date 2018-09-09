@@ -16,11 +16,11 @@
         }
 
         function showResultDiv(flag,msg) {
-            if (flag){
+            if (flag) {
                 $("#save_result_info").text(msg);
-                $("#save_result_info").css("display","block");
-            } else{
-                $("#save_result_info").css("display","none");
+                $("#save_result_info").css("display", "block");
+            } else {
+                $("#save_result_info").css("display", "none");
             }
         }
 

@@ -24,22 +24,33 @@
             else
                 divResult.style.display = "none";
         }
-        function validate(){
-            var hasSelected=false;
+
+        function validate() {
+            $(".required").siblings("input").each(function () {
+                if ($(this).val() == "") {
+                    $(this).siblings(".validate_msg").addClass("error_msg");
+                    return false;
+                } else {
+                    $(this).siblings(".validate_msg").removeClass("error_msg");
+                }
+            });
+            var hasSelected = false;
             $(".select_module").each(function () {
-                if($(this).is(":checked")){
-                    hasSelected=true;
+                if ($(this).is(":checked")) {
+                    hasSelected = true;
                     //结束循环
                     return false;
                 }
             });
-
-            if(!hasSelected){
-                alert("至少选择一个权限")
-                return false;
-            }else{
-                showResult();
+            if (!hasSelected) {
+                $(".must_selected").addClass("error_msg");
+            } else {
+                $(".must_selected").removeClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
                 return true;
+            } else {
+                return false;
             }
         }
     </script>
@@ -64,7 +75,7 @@
         <div class="input_info">
             <input type="text" class="width200" name="roleName"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium">不能为空，且为20长度的字母、数字和汉字的组合</div>
+            <div class="validate_msg_medium validate_msg">不能为空，且为20长度的字母、数字和汉字的组合</div>
         </div>
         <div class="text_info clearfix"><span>设置权限：</span></div>
         <div class="input_info_high">
@@ -77,8 +88,8 @@
                     </c:forEach>
                 </ul>
             </div>
-            <span class="required">*</span>
-            <div class="validate_msg_tiny">至少选择一个权限</div>
+            <span style="color:red;font-size: 10pt">*</span>
+            <div class="validate_msg_tiny validate_msg must_selected">至少选择一个权限</div>
         </div>
         <div class="button_info clearfix">
             <input type="submit" value="保存" class="btn_save"/>
@@ -93,7 +104,7 @@
     <span>版权所有(C)加拿大达内IT培训集团公司 </span>
 </div>
 <script>
-    if(${param.error!=null}){
+    if (${param.error!=null}) {
         alert("该角色已存在");
     }
 </script>

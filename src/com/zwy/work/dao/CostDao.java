@@ -4,6 +4,7 @@ import com.zwy.work.entity.Cost;
 import com.zwy.work.util.DBUtils;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,10 +151,27 @@ public class CostDao {
         }
         return null;
     }
+
+    public void setCostState(Integer costId, String status) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "update cost set status=?,startime=? WHERE cost_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, status);
+            ps.setTimestamp(2,new Timestamp(new Date().getTime()));
+            ps.setInt(3, costId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("修改资费状态失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
     public static void main(String[] args) {
         CostDao dao = new CostDao();
         Cost c = dao.findCostById(6);
         System.out.println(c);
     }
-
 }

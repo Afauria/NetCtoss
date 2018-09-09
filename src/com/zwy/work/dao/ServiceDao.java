@@ -148,7 +148,6 @@ public class ServiceDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-
             String sql = "SELECT * FROM service where os_username=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, osUsername);
@@ -164,5 +163,48 @@ public class ServiceDao {
             DBUtils.close(conn);
         }
         return null;
+    }
+
+    public void updateService(Service service) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "update service set cost_id=? where service_id= ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, service.getCost().getCostId());
+            ps.setInt(2, service.getServiceId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("更新业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public void setServiceState(Integer serviceId, String status) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql1 = "update service set status=?,pause_date=null WHERE service_id=?";
+            String sql2 = "update service set status=?,pause_date=? where service_id=?";
+            PreparedStatement ps = null;
+            if (status.equals("1")) {
+                ps = conn.prepareStatement(sql1);
+                ps.setString(1, status);
+                ps.setInt(2, serviceId);
+            } else {
+                ps = conn.prepareStatement(sql2);
+                ps.setString(1, status);
+                ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+                ps.setInt(3, serviceId);
+            }
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("修改业务账号状态失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
     }
 }

@@ -193,6 +193,7 @@ public class AccountDao {
         }
         return null;
     }
+
     public void updateAccount(Account account) {
         Connection conn = null;
         try {
@@ -219,4 +220,29 @@ public class AccountDao {
         }
     }
 
+    public void setAccountState(Integer accountId, String status) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql1 = "update account set status=?,pause_date=null WHERE account_id=?";
+            String sql2 = "update account set status=?,pause_date=? where account_id=?";
+            PreparedStatement ps = null;
+            if (status.equals("1")) {
+                ps = conn.prepareStatement(sql1);
+                ps.setString(1, status);
+                ps.setInt(2, accountId);
+            } else {
+                ps = conn.prepareStatement(sql2);
+                ps.setString(1, status);
+                ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+                ps.setInt(3, accountId);
+            }
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("修改账务账号状态失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
 }
