@@ -159,7 +159,7 @@ public class CostDao {
             String sql = "update cost set status=?,startime=? WHERE cost_id=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, status);
-            ps.setTimestamp(2,new Timestamp(new Date().getTime()));
+            ps.setTimestamp(2, new Timestamp(new Date().getTime()));
             ps.setInt(3, costId);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -169,6 +169,7 @@ public class CostDao {
             DBUtils.close(conn);
         }
     }
+
     public static void main(String[] args) {
         CostDao dao = new CostDao();
         Cost c = dao.findCostById(6);

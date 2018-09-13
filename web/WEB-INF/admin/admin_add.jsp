@@ -41,9 +41,6 @@
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
 
-            if (!isValidate) {
-                return false;
-            }
             $(".select_role").each(function () {
                 if ($(this).is(":checked")) {
                     hasSelected = true;
@@ -53,11 +50,24 @@
             });
             if (!hasSelected) {
                 $(".must_selected").addClass("error_msg");
-                return false;
             } else {
                 $(".must_selected").removeClass("error_msg");
             }
-            return true;
+
+            if (!limit30Validate($("input[name=adminName]").val())) {
+                $("input[name=adminName]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!phoneValidate($("input[name=telephone]").val())) {
+                $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!emailValidate($("input[name=email]").val())) {
+                $("input[name=email]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     </script>
 </head>
@@ -80,19 +90,19 @@
         <div class="input_info">
             <input type="text" name="adminName"/>
             <span class="required">*</span>
-            <div class="validate_msg_long validate_msg">20长度以内的汉字、字母、数字的组合</div>
+            <div class="validate_msg_long validate_msg">30长度以内的汉字、字母、数字的组合</div>
         </div>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
             <input type="text" name="adminCode"/>
             <span class="required">*</span>
-            <div class="validate_msg_long validate_msg">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long validate_msg">20长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
             <input type="password" name="password"/>
             <span class="required">*</span>
-            <div class="validate_msg_long validate_msg">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long validate_msg">20长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">

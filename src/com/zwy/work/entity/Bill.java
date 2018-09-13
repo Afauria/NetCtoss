@@ -1,27 +1,38 @@
 package com.zwy.work.entity;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 public class Bill {
     private Integer billId;
-    private String owner;
-    private String idCard;
-    private String billAccount;
-    private String billFee;
+    private Float billFee;
     private String billMonth;
     private String payMode;
-    private Integer payStatus;
+    private String payStatus;
+    private Integer accountId;
+    private Account account;
+    private List<Service> services;
 
     public Bill() {
     }
 
-    public Bill(Integer billId, String owner, String idCard, String billAccount, String billFee, String billMonth, String payMode, Integer payStatus) {
+    public Bill(Integer billId, Float billFee, String billMonth, String payMode, String payStatus, Integer accountId, Account account, List<Service> services) {
         this.billId = billId;
-        this.owner = owner;
-        this.idCard = idCard;
-        this.billAccount = billAccount;
         this.billFee = billFee;
         this.billMonth = billMonth;
         this.payMode = payMode;
         this.payStatus = payStatus;
+        this.accountId = accountId;
+        this.account = account;
+        this.services = services;
+    }
+
+    public List<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(List<Service> services) {
+        this.services = services;
     }
 
     public Integer getBillId() {
@@ -32,36 +43,12 @@ public class Bill {
         this.billId = billId;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    public String getBillAccount() {
-        return billAccount;
-    }
-
-    public void setBillAccount(String billAccount) {
-        this.billAccount = billAccount;
-    }
-
-    public String getBillFee() {
-        return billFee;
-    }
-
-    public void setBillFee(String billFee) {
+    public void setBillFee(Float billFee) {
         this.billFee = billFee;
+    }
+
+    public Float getBillFee() {
+        return billFee;
     }
 
     public String getBillMonth() {
@@ -80,11 +67,28 @@ public class Bill {
         this.payMode = payMode;
     }
 
-    public Integer getPayStatus() {
+
+    public Integer getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public String getPayStatus() {
         return payStatus;
     }
 
-    public void setPayStatus(Integer payStatus) {
+    public void setPayStatus(String payStatus) {
         this.payStatus = payStatus;
     }
 }

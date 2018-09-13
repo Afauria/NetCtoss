@@ -1,6 +1,7 @@
 package com.zwy.work.web;
 
 import com.zwy.work.dao.AccountDao;
+import com.zwy.work.dao.BillDao;
 import com.zwy.work.dao.CostDao;
 import com.zwy.work.dao.ServiceDao;
 import com.zwy.work.entity.Account;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ServicesServlet extends HttpServlet {
     private int singlePageLimit = 5;
@@ -235,6 +239,15 @@ public class ServicesServlet extends HttpServlet {
         Integer serviceId = Integer.parseInt(req.getParameter("serviceId"));
         String status = req.getParameter("status");
         ServiceDao serviceDao = new ServiceDao();
+        Service service = serviceDao.findServiceById(serviceId);
+        AccountDao accountDao = new AccountDao();
+        Account account = accountDao.findAccountById(service.getAccountId());
+        if (!account.getStatus().equals("1")) {
+            String errorMsg = "操作失败，所属账务账号未开通！";
+            errorMsg = new String(errorMsg.getBytes("UTF-8"), "iso-8859-1");
+            res.sendRedirect("findServices.do?error='" + errorMsg + "'");
+            return;
+        }
         serviceDao.setServiceState(serviceId, status);
         String successMsg = "开通业务账号成功！";
         if (status.equals("2")) {
@@ -243,4 +256,22 @@ public class ServicesServlet extends HttpServlet {
         successMsg = new String(successMsg.getBytes("UTF-8"), "iso-8859-1");
         res.sendRedirect("findServices.do?success='" + successMsg + "'");
     }
+
+//    private void startCalCost() {
+//        ScheduledExecutorService service = Executors
+//                .newSingleThreadScheduledExecutor();
+//        // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
+//        service.scheduleAtFixedRate(new CalCostJob(), 0, 30, TimeUnit.DAYS);
+//    }
+//
+//    class CalCostJob implements Runnable {
+//        BillDao billDao;
+//        CalCostJob(){
+//            billDao=new BillDao();
+//        }
+//        @Override
+//        public void run() {
+//            billDao.addBill();
+//        }
+//    }
 }

@@ -1,7 +1,11 @@
 package com.zwy.work.web;
 
 import com.zwy.work.dao.AdminDao;
+import com.zwy.work.dao.ModuleDao;
+import com.zwy.work.dao.RoleDao;
 import com.zwy.work.entity.Admin;
+import com.zwy.work.entity.Module;
+import com.zwy.work.entity.Role;
 import com.zwy.work.util.ImageUtil;
 
 import javax.imageio.ImageIO;
@@ -10,8 +14,18 @@ import javax.servlet.http.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainServlet extends HttpServlet {
+    private static final int ROLE_PERMISSION = 1;
+    private static final int ADMIN_PERMISSION = 2;
+    private static final int COST_PERMISSION = 3;
+    private static final int ACCOUNT_PERMISSION = 4;
+    private static final int SERVICE_PERMISSION = 5;
+    private static final int BILL_PERMISSION = 6;
+    private static final int REPORT_PERMISSION = 7;
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //获取请求路径  /findCosts.do
@@ -21,6 +35,9 @@ public class MainServlet extends HttpServlet {
         res.setCharacterEncoding("utf-8");
         //根据规范做出判断处理
         switch (path) {
+            case "/toNoPower.do":
+                req.getRequestDispatcher("WEB-INF/nopower.jsp").forward(req, res);
+                break;
             case "/toLogin.do":
                 toLogin(req, res);
                 break;
@@ -41,8 +58,10 @@ public class MainServlet extends HttpServlet {
             case "/costDetail.do":
             case "/deleteCost.do":
             case "/setCostState.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toCostServlet").forward(req, res);
+                if (checkPermission(req, res, COST_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toCostServlet").forward(req, res);
+                }
                 break;
             case "/findUserInfo.do":
             case "/updateUserInfo.do":
@@ -56,8 +75,10 @@ public class MainServlet extends HttpServlet {
             case "/addAdmin.do":
             case "/deleteAdmin.do":
             case "/resetPwd.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toAdminServlet").forward(req, res);
+                if (checkPermission(req, res, ADMIN_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toAdminServlet").forward(req, res);
+                }
                 break;
             case "/findRoles.do":
             case "/toModifyRole.do":
@@ -65,8 +86,10 @@ public class MainServlet extends HttpServlet {
             case "/toAddRole.do":
             case "/addRole.do":
             case "/deleteRole.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toRoleServlet").forward(req, res);
+                if (checkPermission(req, res, ROLE_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toRoleServlet").forward(req, res);
+                }
                 break;
             case "/findAccounts.do":
             case "/toAddAccount.do":
@@ -77,8 +100,10 @@ public class MainServlet extends HttpServlet {
             case "/searchAccounts.do":
             case "/accountDetail.do":
             case "/setAccountState.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toAccountServlet").forward(req, res);
+                if (checkPermission(req, res, ACCOUNT_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toAccountServlet").forward(req, res);
+                }
                 break;
             case "/findServices.do":
             case "/toAddService.do":
@@ -89,20 +114,48 @@ public class MainServlet extends HttpServlet {
             case "/searchServices.do":
             case "/serviceDetail.do":
             case "/setServiceState.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toServiceServlet").forward(req, res);
+                if (checkPermission(req, res, SERVICE_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toServiceServlet").forward(req, res);
+                }
                 break;
             case "/findReports.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toReportServlet").forward(req, res);
+                if (checkPermission(req, res, REPORT_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toReportServlet").forward(req, res);
+                }
                 break;
             case "/findBills.do":
-                req.setAttribute("path", path);
-                req.getRequestDispatcher("/toBillServlet").forward(req, res);
+            case "/billItem.do":
+            case "/billServiceDetail.do":
+            case "/searchBills.do":
+                if (checkPermission(req, res, BILL_PERMISSION)) {
+                    req.setAttribute("path", path);
+                    req.getRequestDispatcher("/toBillServlet").forward(req, res);
+                }
                 break;
             default:
                 throw new RuntimeException("查无此页面");
         }
+    }
+    private boolean checkPermission(HttpServletRequest req, HttpServletResponse res, int moduleid) throws IOException {
+        HttpSession session = req.getSession();
+        if (session.getAttribute("userInfo") == null) {
+            throw new RuntimeException("用户未登录！");
+        }
+        Admin user = (Admin) session.getAttribute("userInfo");
+        boolean hasPermission = false;
+        for (Module module : user.getAdminModules()) {
+            if (module.getModuleId() == moduleid) {
+                hasPermission = true;
+                break;
+            }
+        }
+        if (!hasPermission) {
+            res.sendRedirect("toNoPower.do");
+            return false;
+        }
+        return true;
     }
 
     private void createImg(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -121,6 +174,9 @@ public class MainServlet extends HttpServlet {
 
     //打开登陆界面
     private void toLogin(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        session.removeAttribute("adminCode");
+        session.removeAttribute("userInfo");
         req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
     }
 
@@ -131,8 +187,8 @@ public class MainServlet extends HttpServlet {
         String password = req.getParameter("password");
         String imgcode = req.getParameter("imgcode");
         //根据账号查找用户
-        AdminDao dao = new AdminDao();
-        Admin user = dao.findUserByCode(adminCode);
+        AdminDao adminDao = new AdminDao();
+        Admin user = adminDao.findUserByCode(adminCode);
         //获取session中的验证码
         HttpSession session = req.getSession();
         String imgcode2 = (String) session.getAttribute("imgcode");
@@ -151,12 +207,34 @@ public class MainServlet extends HttpServlet {
             req.setAttribute("error", "密码错误");
             req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
         } else {
+            RoleDao roleDao = new RoleDao();
+            ModuleDao moduleDao = new ModuleDao();
+            List<Role> roles = roleDao.findRolesByAdminId(user.getAdminId());
+            List<Module> modules = new ArrayList<>();
+            for (Role role : roles) {
+                List<Module> tem = moduleDao.findRoleModulesByRoleId(role.getRoleId());
+                for (Module module : tem) {
+                    boolean hasModule = false;
+                    for (Module module1 : modules) {
+                        if (module1.getModuleId() == module.getModuleId()) {
+                            hasModule = true;
+                        }
+                    }
+                    if (!hasModule) {
+                        modules.add(module);
+                        System.out.println(module.getModuleName());
+                    }
+                }
+            }
+            user.setAdminModules(modules);
+
             //将账户存入cookie
             Cookie c = new Cookie("adminCode", adminCode);
             c.setPath("/netctoss");
             res.addCookie(c);
             //将账号存入session
             session.setAttribute("adminCode", adminCode);
+            session.setAttribute("userInfo", user);
             //登陆成功,重定向到主界面
             res.sendRedirect("toIndex.do");
         }

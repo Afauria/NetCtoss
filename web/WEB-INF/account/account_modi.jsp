@@ -45,12 +45,26 @@
             } else {
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
-
-            if (!isValidate) {
+            if(!limit20Validate($("input[name=realName]").val())){
+                $("input[name=realName]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!phoneValidate($("input[name=telephone]").val())) {
+                $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!emailValidate($("input[name=email]").val())) {
+                $("input[name=email]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!qqValidate($("input[name=QQ]").val())) {
+                $("input[name=QQ]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if(!limit6Validate($("input[name=zipcode]").val())){
+                $("input[name=zipcode]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
                 return false;
             }
-            showResult();
-            return true;
         }
     </script>
 </head>

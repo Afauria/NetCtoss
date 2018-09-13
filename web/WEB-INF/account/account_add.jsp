@@ -6,6 +6,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
     <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/all.js"></script>
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
         function showResult(msg) {
@@ -60,11 +61,39 @@
             } else {
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
-
-            if (!isValidate) {
+            //若不为空，移除error_msg，因此二次校验只需要add不需要remove
+            if(!limit20Validate($("input[name=realName]").val())){
+                $("input[name=realName]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if(!limit30Validate($("input[name=loginName]").val())){
+                $("input[name=loginName]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if(!limit30Validate($("input[name=password]").val())){
+                $("input[name=password]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!idCardValidate($("input[name=accountIdCard]").val())) {
+                $("input[name=accountIdCard]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!idCardValidate($("input[name=recommenderIdCard]").val())) {
+                $("input[name=recommenderIdCard]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!phoneValidate($("input[name=telephone]").val())) {
+                $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!emailValidate($("input[name=email]").val())) {
+                $("input[name=email]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!qqValidate($("input[name=QQ]").val())) {
+                $("input[name=QQ]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if(!limit6Validate($("input[name=zipcode]").val())){
+                $("input[name=zipcode]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
                 return false;
             }
-            return true;
         }
     </script>
 </head>
@@ -87,19 +116,19 @@
         <!--必填项-->
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
-            <input type="text" value="张三" name="realName"/>
+            <input type="text" value="" name="realName"/>
             <span class="required">*</span>
             <div class="validate_msg_long validate_msg">20长度以内的汉字、字母和数字的组合</div>
         </div>
         <div class="text_info clearfix"><span>身份证：</span></div>
         <div class="input_info">
-            <input type="text" value="440582199602272754" name="accountIdCard" onchange="calBirthdate(this)"/>
+            <input type="text" value="" name="accountIdCard" onchange="calBirthdate(this)"/>
             <span class="required">*</span>
             <div class="validate_msg_long validate_msg">正确的身份证号码格式</div>
         </div>
         <div class="text_info clearfix"><span>登录账号：</span></div>
         <div class="input_info">
-            <input type="text" placeholder="创建即启用，状态为开通" name="loginName"/>
+            <input type="text" name="loginName"/>
             <span class="required">*</span>
             <div class="validate_msg_long validate_msg">30长度以内的字母、数字和下划线的组合</div>
         </div>

@@ -1,6 +1,7 @@
 package com.zwy.work.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Service {
     private int serviceId;
@@ -15,11 +16,11 @@ public class Service {
     private Timestamp closeDate;
     private Account account;
     private Cost cost;
-
+    private List<Record> records;
     public Service() {
     }
 
-    public Service(int serviceId, int accountId, int costId, String unixHost, String osUsername, String loginPasswd, String status, Timestamp createDate, Timestamp pauseDate, Timestamp closeDate, Account account, Cost cost) {
+    public Service(int serviceId, int accountId, int costId, String unixHost, String osUsername, String loginPasswd, String status, Timestamp createDate, Timestamp pauseDate, Timestamp closeDate, Account account, Cost cost, List<Record> records) {
         this.serviceId = serviceId;
         this.accountId = accountId;
         this.costId = costId;
@@ -32,6 +33,15 @@ public class Service {
         this.closeDate = closeDate;
         this.account = account;
         this.cost = cost;
+        this.records = records;
+    }
+
+    public List<Record> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<Record> records) {
+        this.records = records;
     }
 
     public int getServiceId() {

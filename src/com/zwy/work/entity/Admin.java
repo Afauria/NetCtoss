@@ -12,10 +12,11 @@ public class Admin {
     private String email;
     private Timestamp enrolldate;
     private List<Role> adminRoles;
+    private List<Module> adminModules;
     public Admin() {
     }
 
-    public Admin(Integer adminId, String adminCode, String password, String adminName, String telephone, String email, Timestamp enrolldate, List<Role> adminRoles) {
+    public Admin(Integer adminId, String adminCode, String password, String adminName, String telephone, String email, Timestamp enrolldate, List<Role> adminRoles, List<Module> adminModules) {
         this.adminId = adminId;
         this.adminCode = adminCode;
         this.password = password;
@@ -24,6 +25,15 @@ public class Admin {
         this.email = email;
         this.enrolldate = enrolldate;
         this.adminRoles = adminRoles;
+        this.adminModules = adminModules;
+    }
+
+    public List<Module> getAdminModules() {
+        return adminModules;
+    }
+
+    public void setAdminModules(List<Module> adminModules) {
+        this.adminModules = adminModules;
     }
 
     public String getTelephone() {

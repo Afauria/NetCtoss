@@ -1,10 +1,19 @@
 package com.zwy.work.filter;
 
+import com.zwy.work.dao.AdminDao;
+import com.zwy.work.dao.ModuleDao;
+import com.zwy.work.dao.RoleDao;
+import com.zwy.work.entity.Admin;
+import com.zwy.work.entity.Module;
+import com.zwy.work.entity.Role;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginFilter implements Filter {
     private String excludedPages;
@@ -34,7 +43,8 @@ public class LoginFilter implements Filter {
         String adminCode = (String) session.getAttribute("adminCode");
         if (adminCode == null || "".equals(adminCode)) {
             // 跳转到登陆页面
-            resp.sendRedirect("toLogin.do");
+//            resp.sendRedirect("toLogin.do");
+            throw new RuntimeException("用户未登录！");
         } else {
             // 已经登陆,继续此次请求
             chain.doFilter(req, resp);

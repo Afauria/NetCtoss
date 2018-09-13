@@ -11,11 +11,11 @@
     <script language="javascript" type="text/javascript">
         //保存结果的提示
         function showResult(msg) {
-            showResultDiv(true,msg);
+            showResultDiv(true, msg);
             window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag,msg) {
+        function showResultDiv(flag, msg) {
             if (flag) {
                 $("#save_result_info").text(msg);
                 $("#save_result_info").css("display", "block");
@@ -69,6 +69,9 @@
             numValidate(1, $("input[name=baseDuration]"))
             numValidate(2, $("input[name=baseCost]"))
             numValidate(2, $("input[name=unitCost]"))
+            if (!limit30Validate($("input[name=costName]").val())) {
+                $("input[name=costName]").siblings(".validate_msg").addClass("error_msg");
+            }
             if ($(".error_msg").length == 0) {
                 return true;
             } else {

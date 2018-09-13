@@ -111,7 +111,8 @@
                 </tr>
                 <c:forEach items="${services}" var="serviceItem">
                     <tr>
-                        <td><a href="serviceDetail.do?id=${serviceItem.serviceId}" title="查看明细">${serviceItem.serviceId}</a></td>
+                        <td><a href="serviceDetail.do?id=${serviceItem.serviceId}"
+                               title="查看明细">${serviceItem.serviceId}</a></td>
                         <td>${serviceItem.accountId}</td>
                         <td>${serviceItem.account.idCard}</td>
                         <td>${serviceItem.account.realName}</td>
@@ -119,7 +120,8 @@
                         <td>${serviceItem.status eq "1"?"开通":(serviceItem.status eq "2"?"暂停":(serviceItem.status eq "3"?"删除":""))}</td>
                         <td>${serviceItem.unixHost}</td>
                         <td>
-                            <a class="summary" onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">
+                            <a class="summary" onmouseover="showDetail(true,this);"
+                               onmouseout="showDetail(false,this);">
                                     ${serviceItem.cost.name}
                             </a>
                             <!--浮动的详细信息-->
@@ -178,6 +180,11 @@
         $("#operate_result_info").css("display", "block");
         $("#operate_result_info").addClass("operate_success");
         $("#operate_result_info").children("span").text(${param.success});
+    }
+    if (${param.error!=null}) {
+        $("#operate_result_info").css("display", "block");
+        $("#operate_result_info").addClass("operate_fail");
+        $("#operate_result_info").children("span").text(${param.error});
     }
 </script>
 </body>

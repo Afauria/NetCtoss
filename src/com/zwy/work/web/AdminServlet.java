@@ -221,8 +221,8 @@ public class AdminServlet extends HttpServlet {
         Integer adminId = Integer.parseInt(req.getParameter("adminId"));
         String adminName = req.getParameter("adminName");
         String adminCode = req.getParameter("adminCode");
-        String telephone = req.getParameter("adminTelephone");
-        String email = req.getParameter("adminEmail");
+        String telephone = req.getParameter("telephone");
+        String email = req.getParameter("email");
         String[] selectRolesId = req.getParameterValues("selectRolesId");
         List<Role> selectRoles = new ArrayList<>();
         RoleDao roleDao = new RoleDao();

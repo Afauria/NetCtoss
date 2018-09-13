@@ -14,31 +14,31 @@
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
         function showResult(msg) {
-            showResultDiv(true,msg);
+            showResultDiv(true, msg);
             window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag,msg) {
-            if (flag){
+        function showResultDiv(flag, msg) {
+            if (flag) {
                 $("#save_result_info").text(msg);
-                $("#save_result_info").css("display","block");
-            } else{
-                $("#save_result_info").css("display","none");
+                $("#save_result_info").css("display", "block");
+            } else {
+                $("#save_result_info").css("display", "none");
             }
         }
 
         //自动查询账务账号
-        function searchAccounts(obj,jsonstr) {
-            var accounts=jsonstr;
-            var hasAccount=false;
+        function searchAccounts(obj, jsonstr) {
+            var accounts = jsonstr;
+            var hasAccount = false;
             for (var i in accounts) {
                 if (accounts[i].idCard == $("input[name=idcard]").val()) {
                     $("input[name=accountLoginName]").val(accounts[i].loginName);
-                    hasAccount=true;
+                    hasAccount = true;
                     return false;
                 }
             }
-            if(!hasAccount){
+            if (!hasAccount) {
                 $(obj).siblings(".validate_msg").addClass("error_msg");
             }
         }
@@ -60,11 +60,17 @@
             } else {
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
-
-            if (!isValidate) {
+            if (!limit8Validate($("input[name=osUsername]").val())) {
+                $("input[name=osUsername]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!limit30Validate($("input[name=password]").val())) {
+                $("input[name=password]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
                 return false;
             }
-            return true;
         }
     </script>
 </head>

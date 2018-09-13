@@ -46,6 +46,9 @@
             } else {
                 $(".must_selected").removeClass("error_msg");
             }
+            if(!limit30Validate($("input[name=roleName]").val())){
+                $("input[name=roleName]").siblings(".validate_msg").addClass("error_msg");
+            }
             if ($(".error_msg").length == 0) {
                 return true;
             } else {

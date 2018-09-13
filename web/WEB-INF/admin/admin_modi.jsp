@@ -24,22 +24,20 @@
             else
                 divResult.style.display = "none";
         }
+
         function validate() {
             var hasSelected = false;
-            var isValidate=true;
-            $("input[name^='admin']").each(function () {
+            var isValidate = true;
+            $(".required").each(function () {
                 if ($(this).val() == "") {
-                    $(this).siblings(".validate_msg_long").addClass("error_msg");
-                    isValidate=false;
+                    $(this).siblings(".validate_msg").addClass("error_msg");
+                    isValidate = false;
                     return false;
                 } else {
-                    $(this).siblings(".validate_msg_long").removeClass("error_msg");
+                    $(this).siblings(".validate_msg").removeClass("error_msg");
                 }
             });
 
-            if(!isValidate){
-                return false;
-            }
             $(".select_role").each(function () {
                 if ($(this).is(":checked")) {
                     hasSelected = true;
@@ -49,12 +47,24 @@
             });
             if (!hasSelected) {
                 $(".validate_msg_tiny").addClass("error_msg");
-                return false;
-            }else{
+            } else {
                 $(".validate_msg_tiny").removeClass("error_msg");
             }
-            showResult();
-            return true;
+
+            if (!limit30Validate($("input[name=adminName]").val())) {
+                $("input[name=adminName]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!phoneValidate($("input[name=telephone]").val())) {
+                $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if (!emailValidate($("input[name=email]").val())) {
+                $("input[name=email]").siblings(".validate_msg").addClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     </script>
 </head>
@@ -72,7 +82,7 @@
 <!--主要区域开始-->
 <div id="main">
     <div id="save_result_info" class="save_success">保存成功！</div>
-    <form action="modifyAdmin.do" method="post" class="main_form"  onsubmit="return validate()">
+    <form action="modifyAdmin.do" method="post" class="main_form" onsubmit="return validate()">
         <%
             Admin adminInfo = (Admin) request.getAttribute("adminInfo");
             List<Role> totalRoles = (List<Role>) request.getAttribute("totalRoles");
@@ -82,22 +92,23 @@
         <div class="input_info">
             <input type="text" value="<%=adminInfo.getAdminName()%>" name="adminName"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
+            <div class="validate_msg_long validate_msg">30长度以内的汉字、字母、数字的组合</div>
         </div>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
-            <input type="text" readonly="readonly" class="readonly" value="<%=adminInfo.getAdminCode()%>" name="adminCode"/></div>
+            <input type="text" readonly="readonly" class="readonly" value="<%=adminInfo.getAdminCode()%>"
+                   name="adminCode"/></div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input type="text" value="<%=adminInfo.getTelephone()%>" name="adminTelephone"/>
+            <input type="text" value="<%=adminInfo.getTelephone()%>" name="telephone"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium validate_msg_long">正确的电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium validate_msg">正确的电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input type="text" class="width200" value="<%=adminInfo.getEmail()%>" name="adminEmail"/>
+            <input type="text" class="width200" value="<%=adminInfo.getEmail()%>" name="email"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium validate_msg_long">50长度以内，正确的 email 格式</div>
+            <div class="validate_msg_medium validate_msg">50长度以内，正确的 email 格式</div>
         </div>
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info_high">
@@ -106,8 +117,9 @@
                     <%
                         for (int i = 0; i < totalRoles.size(); i++) {
                     %>
-                    <li><input type="checkbox" class="select_role" name="selectRolesId" value="<%=totalRoles.get(i).getRoleId()%>"
-                            <%  for (Role role : adminInfo.getAdminRoles()){
+                    <li><input type="checkbox" class="select_role" name="selectRolesId"
+                               value="<%=totalRoles.get(i).getRoleId()%>"
+                            <% for (Role role : adminInfo.getAdminRoles()) {
                                 if (totalRoles.get(i).getRoleId().equals(role.getRoleId())) {
                                     out.print("checked");
                                 }
@@ -120,8 +132,8 @@
                     %>
                 </ul>
             </div>
-            <span class="required">*</span>
-            <div class="validate_msg_tiny">至少选择一个</div>
+            <span class="color:red;font-size: 10pt;">*</span>
+            <div class="validate_msg_tiny validate_msg">至少选择一个</div>
         </div>
         <div class="button_info clearfix">
             <input type="submit" value="保存" class="btn_save"/>

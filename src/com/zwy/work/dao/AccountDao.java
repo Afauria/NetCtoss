@@ -105,13 +105,17 @@ public class AccountDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-            String sql = "delete from account where account_id=?";
+            String sql = "update account set close_date=?,status='3' where account_id=?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, accountId);
+            Timestamp closeDate = new Timestamp(new java.util.Date().getTime());
+            ps.setTimestamp(1, closeDate);
+            ps.setInt(2, accountId);
             ps.executeUpdate();
-            String sql2 = "delete from service where account_id=?";
+            //删除账务账号下所有的业务账号
+            String sql2 = "update service set close_date=?,status='3' where account_id=?";
             ps = conn.prepareStatement(sql2);
-            ps.setInt(1, accountId);
+            ps.setTimestamp(1, closeDate);
+            ps.setInt(2, accountId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -224,20 +228,27 @@ public class AccountDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-            String sql1 = "update account set status=?,pause_date=null WHERE account_id=?";
-            String sql2 = "update account set status=?,pause_date=? where account_id=?";
+            String sql1 = "update account set status=?,pause_date=? where account_id=?";
             PreparedStatement ps = null;
-            if (status.equals("1")) {
-                ps = conn.prepareStatement(sql1);
-                ps.setString(1, status);
-                ps.setInt(2, accountId);
-            } else {
+            Timestamp pauseDate = null;
+            if (status.equals("2")) {
+                pauseDate = new Timestamp(new java.util.Date().getTime());
+            }
+            ps = conn.prepareStatement(sql1);
+            ps.setString(1, status);
+            ps.setTimestamp(2, pauseDate);
+            ps.setInt(3, accountId);
+            ps.executeUpdate();
+            //同时暂停下属的业务账号，开通跳过
+            if (status.equals("2")) {
+                String sql2 = "update service set status=?,pause_date=? where account_id=?";
                 ps = conn.prepareStatement(sql2);
                 ps.setString(1, status);
-                ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+                ps.setTimestamp(2, pauseDate);
                 ps.setInt(3, accountId);
+                ps.executeUpdate();
             }
-            ps.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("修改账务账号状态失败:" + e.getMessage(), e);

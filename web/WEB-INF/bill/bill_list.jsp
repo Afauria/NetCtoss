@@ -1,32 +1,52 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>达内－NetCTOSS</title>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript">
         //写入下拉框中的年份和月份
-        function initialYearAndMonth() {
+        function initialYearAndMonth(_year, _month) {
             //写入最近3年
             var yearObj = document.getElementById("selYears");
             var year = (new Date()).getFullYear();
             for (var i = 0; i <= 2; i++) {
                 var opObj = new Option(year - i, year - i);
+                if (_year == year - i) {
+                    opObj.setAttribute("selected", "selected");
+                }
                 yearObj.options[i] = opObj;
             }
             //写入 12 月
             var monthObj = document.getElementById("selMonths");
             var opObj = new Option("全部", "全部");
+            if (_month == "全部") {
+                opObj.setAttribute("selected", "selected");
+            }
             monthObj.options[0] = opObj;
             for (var i = 1; i <= 12; i++) {
                 var opObj = new Option(i, i);
+                if (_month == i) {
+                    opObj.setAttribute("selected", "selected");
+                }
                 monthObj.options[i] = opObj;
             }
         }
+
+        function searchBills() {
+            var month = $("#selMonths").val();
+            location.href = 'searchBills.do?idCard=' + $("#idcard_search").val() +
+                "&loginName=" + $("#loginname_search").val() +
+                "&realName=" + $("#realname_search").val() +
+                "&year=" + $("#selYears").val() +
+                "&month=" + month;
+        }
     </script>
 </head>
-<body onload="initialYearAndMonth();">
+<body onload="initialYearAndMonth('${year}','${month}');">
 <!--Logo区域开始-->
 <div id="header">
     <%@ include file="../logo.jsp" %>
@@ -42,9 +62,9 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>身份证：<input type="text" value="230101111111111111" class="text_search"/></div>
-            <div>账务账号：<input type="text" value="admin1" class="width100 text_search"/></div>
-            <div>姓名：<input type="text" value="张三" class="width70 text_search"/></div>
+            <div>身份证：<input type="text" value="${idCard}" class="text_search" id="idcard_search"/></div>
+            <div>账务账号：<input type="text" value="${loginName}" class="width100 text_search" id="loginname_search"/></div>
+            <div>姓名：<input type="text" value="${realName}" class="width70 text_search" id="realname_search"/></div>
             <div>
                 <select class="select_search" id="selYears">
                 </select>
@@ -53,7 +73,7 @@
                 </select>
                 月
             </div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="searchBills()"/></div>
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
@@ -69,72 +89,19 @@
                     <th class="width100">支付状态</th>
                     <th class="width50"></th>
                 </tr>
-                <tr>
-                    <td>1</td>
-                    <td>张三</td>
-                    <td>230102197902137862</td>
-                    <td>admin1</td>
-                    <td>543.45</td>
-                    <td>2012年8月</td>
-                    <td></td>
-                    <td>未支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>李四</td>
-                    <td>230102197901111111</td>
-                    <td>admin2</td>
-                    <td>843.00</td>
-                    <td>2012年9月</td>
-                    <td>现金</td>
-                    <td>已支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>王五</td>
-                    <td>230111111111111111</td>
-                    <td>admin3</td>
-                    <td>12.00</td>
-                    <td>2012年10月</td>
-                    <td></td>
-                    <td>未支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>张三</td>
-                    <td>230102197902137862</td>
-                    <td>admin1</td>
-                    <td>543.45</td>
-                    <td>2012年8月</td>
-                    <td></td>
-                    <td>未支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>李四</td>
-                    <td>230102197901111111</td>
-                    <td>admin2</td>
-                    <td>843.00</td>
-                    <td>2012年9月</td>
-                    <td>现金</td>
-                    <td>已支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>王五</td>
-                    <td>230111111111111111</td>
-                    <td>admin3</td>
-                    <td>12.00</td>
-                    <td>2012年10月</td>
-                    <td></td>
-                    <td>未支付</td>
-                    <td><a href="bill_item.html" title="账单明细">明细</a></td>
-                </tr>
+                <c:forEach items="${bills}" var="billItem">
+                    <tr>
+                        <td>${billItem.billId}</td>
+                        <td>${billItem.account.realName}</td>
+                        <td>${billItem.account.idCard}</td>
+                        <td>${billItem.account.loginName}</td>
+                        <td>${billItem.billFee}</td>
+                        <td>${billItem.billMonth}</td>
+                        <td>${billItem.payMode}</td>
+                        <td>${billItem.payStatus}</td>
+                        <td><a href="billItem.do?billId=${billItem.billId}" title="账单明细">明细</a></td>
+                    </tr>
+                </c:forEach>
             </table>
 
             <p>业务说明：<br/>
@@ -145,15 +112,22 @@
         </div>
         <!--分页-->
         <div id="pages">
-            <a href="#">首页</a>
-            <a href="#">上一页</a>
-            <a href="#" class="current_page">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">下一页</a>
-            <a href="#">末页</a>
+            <c:if test="${currentPage>1}">
+                <a href="findBills.do?currentPage=${currentPage-1}">上一页</a>
+            </c:if>
+            <c:forEach begin="1" end="${pageCount}" var="p">
+                <c:choose>
+                    <c:when test="${p==currentPage}">
+                        <a href="findBills.do?currentPage=${p}" class="current_page">${p}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="findBills.do?currentPage=${p}">${p}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+            <c:if test="${currentPage<pageCount}">
+                <a href="findBills.do?currentPage=${currentPage+1}">下一页</a>
+            </c:if>
         </div>
     </form>
 </div>

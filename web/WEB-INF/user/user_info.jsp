@@ -8,14 +8,15 @@
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
     <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/all.js"></script>
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
         function showResult(msg) {
-            showResultDiv(true,msg);
+            showResultDiv(true, msg);
             window.setTimeout("showResultDiv(false,'');", 3000);
         }
 
-        function showResultDiv(flag,msg) {
+        function showResultDiv(flag, msg) {
             if (flag) {
                 $("#save_result_info").text(msg);
                 $("#save_result_info").css("display", "block");
@@ -23,6 +24,7 @@
                 $("#save_result_info").css("display", "none");
             }
         }
+
         function validate() {
             var isValidate = true;
             $(".required").prev().each(function () {
@@ -34,23 +36,14 @@
                     $(this).siblings(".validate_msg").removeClass("error_msg");
                 }
             });
-            if (!isValidate) {
-                return false;
-            }
-            var isPhoneValidate=phoneValidate($("input[name=telephone]").val());
-            return isPhoneValidate;
-        }
-        function phoneValidate(phonenum) {
-            if(phonenum==""){
-                return true;
-            }
-            var reg=/^[1][3,4,5,7,8][0-9]{9}$/;
-            if (!reg.test(phonenum)) {
+
+            if (!phoneValidate($("input[name=telephone]").val())) {
                 $("input[name=telephone]").siblings(".validate_msg").addClass("error_msg");
-                return false;
-            } else {
-                $("input[name=telephone]").siblings(".validate_msg").removeClass("error_msg");
+            }
+            if ($(".error_msg").length == 0) {
                 return true;
+            } else {
+                return false;
             }
         }
     </script>
@@ -73,9 +66,9 @@
     <form action="updateUserInfo.do" method="" class="main_form" onsubmit="return validate()">
         <%
             Admin userInfo = (Admin) request.getAttribute("userInfo");
-            StringBuilder rolesStr=new StringBuilder();
-            for(int i=0;i<userInfo.getAdminRoles().size();i++){
-                if(i!=0){
+            StringBuilder rolesStr = new StringBuilder();
+            for (int i = 0; i < userInfo.getAdminRoles().size(); i++) {
+                if (i != 0) {
                     rolesStr.append("、");
                 }
                 rolesStr.append(userInfo.getAdminRoles().get(i).getRoleName());
@@ -83,7 +76,8 @@
         %>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
-            <input type="text" readonly="readonly" class="readonly" name="adminCode" value="<%= userInfo.getAdminCode() %>"/></div>
+            <input type="text" readonly="readonly" class="readonly" name="adminCode"
+                   value="<%= userInfo.getAdminCode() %>"/></div>
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info">
             <input type="text" readonly="readonly" class="readonly width400" value="<%= rolesStr %>"/>
@@ -96,7 +90,7 @@
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input type="text" class="width200" value="<%= userInfo.getTelephone() %>" name="telephone" />
+            <input type="text" class="width200" value="<%= userInfo.getTelephone() %>" name="telephone"/>
             <div class="validate_msg_medium validate_msg">电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>

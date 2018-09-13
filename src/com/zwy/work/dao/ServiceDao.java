@@ -2,6 +2,7 @@ package com.zwy.work.dao;
 
 import com.zwy.work.entity.Service;
 import com.zwy.work.util.DBUtils;
+import org.junit.Test;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -71,9 +72,11 @@ public class ServiceDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-            String sql = "delete from service where service_id=?";
+            String sql = "update service set close_date=?,status='3' where service_id=?";
+            Timestamp closeDate = new Timestamp(new java.util.Date().getTime());
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, serviceId);
+            ps.setTimestamp(1, closeDate);
+            ps.setInt(2, serviceId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,19 +189,17 @@ public class ServiceDao {
         Connection conn = null;
         try {
             conn = DBUtils.getConnection();
-            String sql1 = "update service set status=?,pause_date=null WHERE service_id=?";
-            String sql2 = "update service set status=?,pause_date=? where service_id=?";
+            String sql1 = "update service set status=?,pause_date=? where service_id=?";
             PreparedStatement ps = null;
-            if (status.equals("1")) {
-                ps = conn.prepareStatement(sql1);
-                ps.setString(1, status);
-                ps.setInt(2, serviceId);
-            } else {
-                ps = conn.prepareStatement(sql2);
-                ps.setString(1, status);
-                ps.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
-                ps.setInt(3, serviceId);
+            Timestamp pauseDate = null;
+            if (status.equals("2")) {
+                pauseDate = new Timestamp(new java.util.Date().getTime());
             }
+            ps = conn.prepareStatement(sql1);
+            ps.setString(1, status);
+            ps.setTimestamp(2, pauseDate);
+            ps.setInt(3, serviceId);
+
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -206,5 +207,59 @@ public class ServiceDao {
         } finally {
             DBUtils.close(conn);
         }
+    }
+
+    public List<Service> findServicesByAccountId(Integer accountId) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+
+            String sql = "SELECT * FROM service where account_id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, accountId);
+            ResultSet rs = ps.executeQuery();
+            List<Service> services = new ArrayList<>();
+            while (rs.next()) {
+                Service service = createService(rs);
+                services.add(service);
+            }
+            return services;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("查询业务账号失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public void createEvent(String eventName) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql = "create event cost_per " +
+                    "on schedule every 10 second starts now() " +
+                    "do " +
+                    "begin " +
+                    "   start transaction; " +
+                    "       insert into bill(account_id,bill_fee,bill_month,pay_mode,pay_status) values(?,?,?,?,?); " +
+                    "   commit; " +
+                    "end";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, 1);
+            ps.setFloat(2, 4.55f);
+            ps.setString(3, "111");
+            ps.setString(4, "2222");
+            ps.setString(5, "3333");
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("计算账单失败:" + e.getMessage(), e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+    @Test
+    public void main(){
+        createEvent("cost_per");
     }
 }

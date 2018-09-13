@@ -47,6 +47,9 @@
             } else {
                 $(".must_selected").removeClass("error_msg");
             }
+            if(!limit30Validate($("input[name=roleName]").val())){
+                $("input[name=roleName]").siblings(".validate_msg").addClass("error_msg");
+            }
             if ($(".error_msg").length == 0) {
                 return true;
             } else {
@@ -88,7 +91,7 @@
                     </c:forEach>
                 </ul>
             </div>
-            <span style="color:red;font-size: 10pt">*</span>
+            <span style="color:red;font-size: 10pt;">*</span>
             <div class="validate_msg_tiny validate_msg must_selected">至少选择一个权限</div>
         </div>
         <div class="button_info clearfix">
