@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="styles/global_color.css"/>
     <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/all.js"></script>
     <script language="javascript" type="text/javascript">
         //保存成功的提示消息
         function showResult() {
