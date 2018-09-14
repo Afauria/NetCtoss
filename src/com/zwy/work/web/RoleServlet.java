@@ -66,8 +66,8 @@ public class RoleServlet extends HttpServlet {
         if (currentPage > pageCount) {
             currentPage = pageCount;
         }
-        roles = roles.subList((currentPage - 1) * singlePageLimit, (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
-        //讲数据保存到HttpServletRequest对象上,并转发到JSP
+        roles = roles.subList((currentPage - 1) * singlePageLimit,
+                (currentPage - 1) * singlePageLimit + (currentPage == pageCount ? lastPageCostCount : singlePageLimit));
         req.setAttribute("currentPage", currentPage);
         req.setAttribute("pageCount", pageCount);
         req.setAttribute("roles", roles);

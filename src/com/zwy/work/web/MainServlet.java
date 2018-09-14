@@ -193,12 +193,11 @@ public class MainServlet extends HttpServlet {
         HttpSession session = req.getSession();
         String imgcode2 = (String) session.getAttribute("imgcode");
         //判断表单提交的验证码和服务端产生的验证码是否一致
-//        if (imgcode == null || imgcode.equals("") || !imgcode.equalsIgnoreCase(imgcode2)) {
-//            //验证码错误,转发到登陆界面
-//            req.setAttribute("error", "验证码错误");
-//            req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
-//        } else
-        if (user == null) {
+        if (imgcode == null || imgcode.equals("") || !imgcode.equalsIgnoreCase(imgcode2)) {
+            //验证码错误,转发到登陆界面
+            req.setAttribute("error", "验证码错误");
+            req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);
+        } else if (user == null) {
             //账号错误,转发到登陆界面
             req.setAttribute("error", "账号不存在");
             req.getRequestDispatcher("WEB-INF/main/login.jsp").forward(req, res);

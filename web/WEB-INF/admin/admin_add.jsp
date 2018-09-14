@@ -24,11 +24,9 @@
 
         function validate() {
             var hasSelected = false;
-            var isValidate = true;
             $(".required").prev().each(function () {
                 if ($(this).val() == "") {
                     $(this).siblings(".validate_msg").addClass("error_msg");
-                    isValidate = false;
                     return false;
                 } else {
                     $(this).siblings(".validate_msg").removeClass("error_msg");
@@ -36,15 +34,12 @@
             });
             if ($("input[name='password']").val() != $("input[name='confirmPassword']").val()) {
                 $("input[name='confirmPassword']").siblings(".validate_msg").addClass("error_msg");
-                isValidate = false;
             } else {
                 $("input[name='confirmPassword']").siblings(".validate_msg").removeClass("error_msg");
             }
-
             $(".select_role").each(function () {
                 if ($(this).is(":checked")) {
                     hasSelected = true;
-                    //结束循环
                     return false;
                 }
             });

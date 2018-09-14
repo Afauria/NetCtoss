@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminServlet extends HttpServlet {
-    private int singlePageLimit = 5;
+    private int singlePageLimit = 10;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

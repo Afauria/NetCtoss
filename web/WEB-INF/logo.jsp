@@ -2,6 +2,6 @@
 <img src="images/logo.png" alt="logo" class="left"/>
 <!-- cookie.key.value -->
 <%-- <span>${cookie.adminCode.value}</span> --%>
-<span>${sessionScope.adminCode}</span>
+<span>${userInfo.adminName}</span>
 
 <a href="/netctoss/toLogin.do">[退出]</a>

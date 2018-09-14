@@ -1,3 +1,4 @@
+//手机号码验证
 function phoneValidate(phonenum) {
     if (phonenum == "") {
         return true;
@@ -9,7 +10,7 @@ function phoneValidate(phonenum) {
         return true;
     }
 }
-
+//身份证号验证
 function idCardValidate(card) {
     if (card == "") {
         return true;
@@ -21,7 +22,7 @@ function idCardValidate(card) {
     }
     return true;
 }
-
+//邮箱验证
 function emailValidate(email) {
     if (email == "") {
         return true;
@@ -33,7 +34,7 @@ function emailValidate(email) {
         return true;
     }
 }
-
+//qq验证
 function qqValidate(qq) {
     if (qq == "") {
         return true;
@@ -45,7 +46,7 @@ function qqValidate(qq) {
         return true;
     }
 }
-
+//1到8位数字、字母或下划线
 function limit8Validate(str) {
     if (str == "") {
         return true;
@@ -57,7 +58,7 @@ function limit8Validate(str) {
         return true;
     }
 }
-
+//1到20位任意字符
 function limit20Validate(str) {
     if (str == "") {
         return true;
@@ -69,6 +70,7 @@ function limit20Validate(str) {
         return true;
     }
 }
+//1到6位任意字符
 function limit6Validate(str) {
     if (str == "") {
         return true;
@@ -80,7 +82,7 @@ function limit6Validate(str) {
         return true;
     }
 }
-
+//1到30位数字、字母、下划线
 function limit30Validate(str) {
     if (str == "") {
         return true;
